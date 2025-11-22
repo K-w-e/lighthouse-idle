@@ -1,0 +1,24 @@
+import Phaser from 'phaser';
+import GameScene from './scenes/GameScene';
+import PreloaderScene from './scenes/PreloaderScene';
+import UIScene from './scenes/UIScene';
+import { StatsScene } from './scenes/StatsScene';
+import TitleScene from './scenes/TitleScene';
+import { TutorialScene } from './scenes/TutorialScene';
+
+const config: Phaser.Types.Core.GameConfig = {
+    type: Phaser.WEBGL,
+    width: 1200,
+    height: 900,
+    parent: 'game-container',
+    pixelArt: true,
+    scene: [PreloaderScene, TitleScene, GameScene, UIScene, StatsScene, TutorialScene],
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: true,
+        }
+    }
+};
+
+export default new Phaser.Game(config);
