@@ -114,44 +114,46 @@ export class Wave extends Phaser.GameObjects.Container {
     drawWave() {
         this.graphics.clear();
 
-        this.graphics.fillStyle(this.waveColor, 1);
-        this.graphics.beginPath();
+        const points: { x: number, y: number, taper: number }[] = [];
+        const halfWidth = this.waveWidth / 2;
 
-        const points: { x: number, y: number }[] = [];
+        for (let i = -halfWidth; i <= halfWidth; i += this.pixelSize) {
+            const normalizedPos = Math.abs(i) / halfWidth;
+            const taper = 1 - Math.pow(normalizedPos, 2.5);
 
-        for (let i = -this.waveWidth / 2; i <= this.waveWidth / 2; i += this.pixelSize) {
             const y1 = Math.sin((i + this.time) * this.waveFrequency) * this.waveAmplitude;
             const y2 = Math.sin((i + this.time) * this.waveFrequency * this.waveFrequency2) * (this.waveAmplitude * this.waveAmplitude2);
-            const y = y1 + y2;
-            points.push({ x: i, y: y });
+            const y = (y1 + y2) * taper;
+            points.push({ x: i, y: y, taper: taper });
         }
 
-        if (points.length > 0) {
-            this.graphics.moveTo(points[0].x, points[0].y);
-            for (let i = 1; i < points.length; i++) {
-                this.graphics.lineTo(points[i].x, points[i].y);
-            }
+        if (points.length === 0) return;
 
-            this.graphics.lineTo(this.waveWidth / 2, 20);
-            this.graphics.lineTo(-this.waveWidth / 2, 20);
-            this.graphics.closePath();
-            this.graphics.fillPath();
-        }
+        this.graphics.lineTo(halfWidth, 20);
+        this.graphics.lineTo(-halfWidth, 20);
+        this.graphics.closePath();
+        this.graphics.fillPath();
 
         this.graphics.fillStyle(this.crestColor, 1);
         for (let i = 0; i < points.length; i++) {
-            this.graphics.fillRect(points[i].x, points[i].y - 2, this.pixelSize, 4);
+            if (points[i].taper > 0.1) {
+                this.graphics.fillRect(points[i].x, points[i].y - 2, this.pixelSize, 4);
+            }
         }
 
         this.graphics.fillStyle(this.foamColor);
         this.foamPositions.forEach(pos => {
+            const normalizedPos = Math.abs(pos.x) / halfWidth;
+            if (normalizedPos > 1) return;
+
+            const taper = 1 - Math.pow(normalizedPos, 2.5);
             const y1 = Math.sin((pos.x + this.time) * this.waveFrequency) * this.waveAmplitude;
             const y2 = Math.sin((pos.x + this.time) * this.waveFrequency * this.waveFrequency2) * (this.waveAmplitude * this.waveAmplitude2);
-            const y = y1 + y2;
+            const waveY = (y1 + y2) * taper;
 
-            this.graphics.setAlpha(Math.max(0.3, pos.alpha));
+            this.graphics.setAlpha(Math.max(0.3, pos.alpha * taper));
             const x = Math.floor(pos.x / this.pixelSize) * this.pixelSize;
-            const finalY = Math.floor((pos.y + y) / this.pixelSize) * this.pixelSize;
+            const finalY = Math.floor((pos.y + waveY) / this.pixelSize) * this.pixelSize;
             this.graphics.fillRect(x, finalY, this.pixelSize, this.pixelSize);
         });
     }
