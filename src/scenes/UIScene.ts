@@ -96,6 +96,13 @@ export default class UIScene extends Phaser.Scene {
             }
         });
 
+        createButton(this, gameWidth - 300, 20, 'SETTINGS', () => {
+            if (!this.scene.isActive('SettingsScene')) {
+                this.scene.launch('SettingsScene');
+                this.scene.pause('GameScene');
+            }
+        });
+
         this.createShopUI();
 
         this.updateLightText();

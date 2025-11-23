@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { Wave } from '../object/Wave';
 import UIScene from './UIScene';
 import GameManager from '../GameManager';
+import { SettingsManager } from '../utils/SettingsManager';
 import { createLand, createVision, drawLight, getTileColor } from '../utils/draw';
 import { FloatingText } from '../object/FloatingText';
 
@@ -30,7 +31,6 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
-        this.sound.play('bg_audio' + Phaser.Math.Between(1, 4), { loop: true, volume: 0.5 });
         this.add.image(this.gameWidth / 2, this.gameHeight / 2, 'background').setAlpha(0.5);
         this.uiScene = this.scene.get('UIScene') as UIScene;
         GameManager.initialize(this, this.uiScene);
@@ -41,6 +41,8 @@ export default class GameScene extends Phaser.Scene {
         this.lighthouse = this.add.sprite(centerX, centerY, 'lighthouse').setScale(5);
         this.physics.add.existing(this.lighthouse, true);
         this.lighthouse.setInteractive({ useHandCursor: true });
+
+        this.sound.play('bg_audio' + Phaser.Math.Between(1, 4), { loop: true, volume: SettingsManager.getInstance().musicVolume });
 
         const energyParticles = this.add.particles(0, 0, 'foam_block', {
             speed: { min: -100, max: 100 },
@@ -54,7 +56,9 @@ export default class GameScene extends Phaser.Scene {
 
         this.lighthouse.on('pointerdown', () => {
             GameManager.handleLighthouseClick();
-            energyParticles.emitParticleAt(this.lighthouse.x, this.lighthouse.y, 16);
+            if (SettingsManager.getInstance().particlesEnabled) {
+                energyParticles.emitParticleAt(this.lighthouse.x, this.lighthouse.y, 16);
+            }
         });
 
         this.waveDestroyParticles = this.add.particles(0, 0, 'foam_block', {
@@ -171,25 +175,32 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private destroyWave(wave: Wave) {
-        this.waveDestroyParticles.emitParticleAt(wave.x, wave.y);
+        if (SettingsManager.getInstance().particlesEnabled) {
+            this.waveDestroyParticles.emitParticleAt(wave.x, wave.y);
+        }
         wave.destroy();
     }
 
 
     private handleWaveLighthouseCollision(lighthouse: Phaser.GameObjects.GameObject, waveObject: Phaser.GameObjects.GameObject) {
         const wave = waveObject as Wave;
+        this.sound.play('wave_crash' + Phaser.Math.Between(1, 4), { volume: SettingsManager.getInstance().sfxVolume });
+        if (SettingsManager.getInstance().screenShakeEnabled) {
+            this.cameras.main.shake(100, 0.005);
+        }
+
         GameManager.handleWaveLighthouseCollision();
         this.destroyWave(wave);
-        this.sound.play('wave_crash' + Phaser.Math.Between(1, 4));
-        this.cameras.main.shake(100, 0.005);
-        new FloatingText(this, this.lighthouse.x, this.lighthouse.y - 50, '-10 HP', '#FF0000');
     }
 
     private handleWaveLandCollision(waveObject: Phaser.GameObjects.GameObject, landTile: Phaser.GameObjects.GameObject) {
         const wave = waveObject as Wave;
         this.erodeAt(wave.x, wave.y, Math.max(wave.body.width, 1));
         this.destroyWave(wave);
-        this.sound.play('wave_crash' + Phaser.Math.Between(1, 4));
+        this.sound.play('wave_crash' + Phaser.Math.Between(1, 4), { volume: SettingsManager.getInstance().sfxVolume });
+        if (SettingsManager.getInstance().screenShakeEnabled) {
+            this.cameras.main.shake(100, 0.005);
+        }
         this.cameras.main.shake(100, 0.005);
     }
 
@@ -282,12 +293,12 @@ export default class GameScene extends Phaser.Scene {
 
             for (let i = 0; i < Math.min(wavesInBeam.length, GameManager.beamPenetration); i++) {
                 const waveToDestroy = wavesInBeam[i];
-
-                // Damage logic
-                let damage = 1; // Base damage
-
+                const damage = 1; // Base damage
                 waveToDestroy.health -= damage;
-                this.hitParticles.emitParticleAt(waveToDestroy.x, waveToDestroy.y);
+
+                if (SettingsManager.getInstance().particlesEnabled) {
+                    this.hitParticles.emitParticleAt(waveToDestroy.x, waveToDestroy.y);
+                }
 
                 if (waveToDestroy.health <= 0) {
                     this.events.emit('waveDestroyed', waveToDestroy);
@@ -295,7 +306,7 @@ export default class GameScene extends Phaser.Scene {
                     if (GameManager.chainLightningChance > 0 && Math.random() < GameManager.chainLightningChance) {
                         const nearbyWave = this.waves.getChildren().find(w => {
                             const wObj = w as Wave;
-                            return wObj.active && wObj !== waveToDestroy && Phaser.Math.Distance.Between(waveToDestroy.x, waveToDestroy.y, wObj.x, wObj.y) < 100;
+                            return wObj.active && wObj !== waveToDestroy && Phaser.Math.Distance.Between(waveToDestroy.x, waveToDestroy.y, wObj.x, wObj.y) < 150;
                         }) as Wave;
 
                         if (nearbyWave) {
@@ -308,8 +319,11 @@ export default class GameScene extends Phaser.Scene {
                                 duration: 200,
                                 onComplete: () => lightning.destroy()
                             });
-                            this.events.emit('waveDestroyed', nearbyWave);
-                            this.destroyWave(nearbyWave);
+                            nearbyWave.health -= damage;
+                            if (nearbyWave.health <= 0) {
+                                this.events.emit('waveDestroyed', nearbyWave);
+                                this.destroyWave(nearbyWave);
+                            }
                         }
                     }
 
@@ -458,11 +472,26 @@ export default class GameScene extends Phaser.Scene {
         const bombRadius = 500;
         const explosion = this.add.circle(this.lighthouse.x, this.lighthouse.y, 10, 0xffa500, 0.8);
 
+        if (SettingsManager.getInstance().screenShakeEnabled) {
+            this.cameras.main.shake(200, 0.01);
+        }
+
         this.tweens.add({
             targets: explosion,
             radius: bombRadius,
             alpha: 0,
             duration: 500,
+            onUpdate: () => {
+                this.waves.getChildren().forEach(go => {
+                    const wave = go as Wave;
+                    if (!wave.active) return;
+                    const distance = Phaser.Math.Distance.Between(this.lighthouse.x, this.lighthouse.y, wave.x, wave.y);
+                    if (distance <= explosion.radius) {
+                        this.events.emit('waveDestroyed', wave);
+                        this.destroyWave(wave);
+                    }
+                });
+            },
             onComplete: () => {
                 explosion.destroy();
             }

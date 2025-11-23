@@ -5,6 +5,7 @@ import UIScene from './scenes/UIScene';
 import { StatsScene } from './scenes/StatsScene';
 import TitleScene from './scenes/TitleScene';
 import { TutorialScene } from './scenes/TutorialScene';
+import { SettingsScene } from './scenes/SettingsScene';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.WEBGL,
@@ -12,7 +13,7 @@ const config: Phaser.Types.Core.GameConfig = {
     height: 900,
     parent: 'game-container',
     pixelArt: true,
-    scene: [PreloaderScene, TitleScene, GameScene, UIScene, StatsScene, TutorialScene],
+    scene: [PreloaderScene, TitleScene, GameScene, UIScene, StatsScene, SettingsScene, TutorialScene],
     physics: {
         default: 'arcade',
         arcade: {
