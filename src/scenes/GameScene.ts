@@ -30,7 +30,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
-
+        this.sound.play('bg_audio' + Phaser.Math.Between(1, 4), { loop: true, volume: 0.5 });
         this.add.image(this.gameWidth / 2, this.gameHeight / 2, 'background').setAlpha(0.5);
         this.uiScene = this.scene.get('UIScene') as UIScene;
         GameManager.initialize(this, this.uiScene);
@@ -76,7 +76,6 @@ export default class GameScene extends Phaser.Scene {
             emitting: false,
             tint: 0xFFFFFF,
         });
-
 
         const { landRT, landTiles } = createLand(this, this.lighthouse, this.landRadius);
         this.landRT = landRT;
@@ -181,17 +180,16 @@ export default class GameScene extends Phaser.Scene {
         const wave = waveObject as Wave;
         GameManager.handleWaveLighthouseCollision();
         this.destroyWave(wave);
+        this.sound.play('wave_crash' + Phaser.Math.Between(1, 4));
         this.cameras.main.shake(100, 0.005);
         new FloatingText(this, this.lighthouse.x, this.lighthouse.y - 50, '-10 HP', '#FF0000');
     }
 
     private handleWaveLandCollision(waveObject: Phaser.GameObjects.GameObject, landTile: Phaser.GameObjects.GameObject) {
         const wave = waveObject as Wave;
-
-        if (wave.body) {
-            this.erodeAt(wave.x, wave.y, Math.max(wave.body.width, 1));
-        }
+        this.erodeAt(wave.x, wave.y, Math.max(wave.body.width, 1));
         this.destroyWave(wave);
+        this.sound.play('wave_crash' + Phaser.Math.Between(1, 4));
         this.cameras.main.shake(100, 0.005);
     }
 

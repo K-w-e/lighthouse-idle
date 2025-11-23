@@ -8,6 +8,16 @@ export default class PreloaderScene extends Phaser.Scene {
     preload() {
         this.load.image('background', 'assets/background.png');
         this.load.image('lighthouse', 'assets/lighthouse.png');
+
+        this.load.audio('wave_crash1', 'assets/audio/wave_crash1.mp3');
+        this.load.audio('wave_crash2', 'assets/audio/wave_crash2.mp3');
+        this.load.audio('wave_crash3', 'assets/audio/wave_crash3.mp3');
+        this.load.audio('wave_crash4', 'assets/audio/wave_crash4.mp3');
+
+        this.load.audio('bg_audio1', 'assets/audio/bg_audio1.mp3');
+        this.load.audio('bg_audio2', 'assets/audio/bg_audio1.mp3');
+        this.load.audio('bg_audio3', 'assets/audio/bg_audio1.mp3');
+        this.load.audio('bg_audio4', 'assets/audio/bg_audio1.mp3');
     }
 
     create() {
