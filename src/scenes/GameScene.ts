@@ -113,8 +113,8 @@ export default class GameScene extends Phaser.Scene {
         this.events.on('applyUpgrade', this.applyUpgrade, this);
 
         this.events.on('waveDestroyed', (wave: Wave) => {
-            GameManager.onWaveDestroyed();
-            new FloatingText(this, wave.x, wave.y, `+${GameManager.getWaveLightReward()}`, '#FBBF24');
+            GameManager.onWaveDestroyed(wave);
+            new FloatingText(this, wave.x, wave.y, `+${GameManager.getWaveLightReward(wave)}`, '#FBBF24');
         });
 
         // Passive light generation

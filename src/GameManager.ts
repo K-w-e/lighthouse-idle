@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import GameScene from './scenes/GameScene';
 import UIScene from './scenes/UIScene';
 import { getUpgradeById } from './data/upgrades';
+import { Wave } from './object/Wave';
 
 class GameManager {
     private static instance: GameManager;
@@ -44,7 +45,7 @@ class GameManager {
     private autoBuilderTimer: number = 0;
 
     // Economic properties
-    private light: number = 1000000;
+    private light: number = 50;
     public lightPerSecond: number = 0;
     public waveFragmentsModifier: number = 1;
     public kineticSiphonModifier: number = 0;
@@ -151,7 +152,7 @@ class GameManager {
     private endWave() {
         this.waveState = 'waiting';
         this.waveTimer = this.waveDelay;
-        this.addLight(this.waveReward);
+        this.addLight(this.waveReward * this.waveNumber);
         this.uiScene.updateWaveNumber(this.waveNumber);
     }
 
@@ -274,12 +275,12 @@ class GameManager {
         }
     }
 
-    public getWaveLightReward(): number {
-        return Math.floor(this.waveReward * this.waveFragmentsModifier * this.lightMultiplier);
+    public getWaveLightReward(wave: Wave): number {
+        return Math.floor((wave.waveWidth / 10) + this.waveFragmentsModifier * this.lightMultiplier);
     }
 
-    public onWaveDestroyed() {
-        let lightToAdd = this.getWaveLightReward();
+    public onWaveDestroyed(wave: Wave) {
+        let lightToAdd = this.getWaveLightReward(wave);
         this.addLight(lightToAdd);
         this.currentEnergy = Math.min(this.maxEnergy, this.currentEnergy + this.energyOnKill);
         this.uiScene.updateEnergy(this.currentEnergy, this.maxEnergy);
