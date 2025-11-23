@@ -60,32 +60,32 @@ export default class UIScene extends Phaser.Scene {
             .lineStyle(2, BORDER_COLOR)
             .strokeRect(0, 0, gameWidth, statsBarHeight);
 
-        this.add.text(200, 15, 'Health', { fontSize: '18px', color: TEXT_COLOR });
+        this.add.text(15, 15, 'Health', { fontSize: '18px', color: TEXT_COLOR });
         this.healthBarBg = this.add.graphics()
+            .fillStyle(BG_COLOR)
+            .fillRoundedRect(15, 40, 150, 25, 10)
+            .lineStyle(2, BORDER_COLOR)
+            .strokeRoundedRect(15, 40, 150, 25, 10);
+        this.healthBar = this.add.graphics({ x: 15, y: 40 })
+            .fillStyle(HEALTH_COLOR)
+            .fillRoundedRect(0, 0, 150, 25, 10);
+
+        this.add.text(200, 15, 'Energy', { fontSize: '18px', color: TEXT_COLOR });
+        this.energyBarBg = this.add.graphics()
             .fillStyle(BG_COLOR)
             .fillRoundedRect(200, 40, 150, 25, 10)
             .lineStyle(2, BORDER_COLOR)
             .strokeRoundedRect(200, 40, 150, 25, 10);
-        this.healthBar = this.add.graphics({ x: 200, y: 40 })
-            .fillStyle(HEALTH_COLOR)
-            .fillRoundedRect(0, 0, 150, 25, 10);
-
-        this.add.text(370, 15, 'Energy', { fontSize: '18px', color: TEXT_COLOR });
-        this.energyBarBg = this.add.graphics()
-            .fillStyle(BG_COLOR)
-            .fillRoundedRect(370, 40, 150, 25, 10)
-            .lineStyle(2, BORDER_COLOR)
-            .strokeRoundedRect(370, 40, 150, 25, 10);
-        this.energyBar = this.add.graphics({ x: 370, y: 40 })
+        this.energyBar = this.add.graphics({ x: 200, y: 40 })
             .fillStyle(ACCENT_COLOR)
             .fillRoundedRect(0, 0, 150, 25, 10);
         this.energyBar.scaleX = 0;
 
-        this.waveText = this.add.text(550, 25, 'Wave: 1', {
+        this.waveText = this.add.text(400, 25, 'Wave: 1', {
             fontSize: '20px',
             color: TEXT_COLOR,
         }).setOrigin(0, 0.5);
-        this.waveTimerText = this.add.text(550, 55, 'Time: 30', {
+        this.waveTimerText = this.add.text(400, 55, 'Time: 30', {
             fontSize: '20px',
             color: TEXT_COLOR,
         }).setOrigin(0, 0.5);
