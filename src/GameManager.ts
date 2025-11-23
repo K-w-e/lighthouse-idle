@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import GameScene from './scenes/GameScene';
 import UIScene from './scenes/UIScene';
+import { getUpgradeById } from './data/upgrades';
 
-import { getUpgradeById } from './object/upgrades';
 class GameManager {
     private static instance: GameManager;
 

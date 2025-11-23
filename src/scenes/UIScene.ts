@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import GameManager from '../GameManager';
-import { upgrades } from '../object/upgrades';
+import { upgrades } from '../data/upgrades';
 
-type UpgradeCategory = keyof typeof upgrades;
+type UpgradeCategory = string;
 type Upgrade = typeof upgrades[UpgradeCategory][0];
 
 const SHOP_BORDER_COLOR = 0x5B6D84;
@@ -44,7 +44,6 @@ export default class UIScene extends Phaser.Scene {
     private tabIndicator!: Phaser.GameObjects.Graphics;
     private scrollMinY = 0;
     private scrollMaxY = 0;
-
 
     constructor() {
         super({ key: 'UIScene', active: false });
@@ -329,7 +328,6 @@ export default class UIScene extends Phaser.Scene {
             color: SHOP_ACCENT_COLOR,
         }).setOrigin(0.5);
         this.updateLightText();
-
 
         const categories = Object.keys(upgrades) as UpgradeCategory[];
         const tabWidth = (shopWidth - 40) / categories.length;

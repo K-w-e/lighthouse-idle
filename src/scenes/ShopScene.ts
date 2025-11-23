@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { upgrades } from '../object/upgrades';
+import { upgrades } from '../data/upgrades';
 import GameManager from '../GameManager';
 
 type UpgradeCategory = keyof typeof upgrades;
