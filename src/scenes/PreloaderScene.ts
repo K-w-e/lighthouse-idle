@@ -8,6 +8,11 @@ export default class PreloaderScene extends Phaser.Scene {
     preload() {
         this.load.image('background', 'assets/background.png');
         this.load.image('lighthouse', 'assets/lighthouse.png');
+        
+        this.load.image('defensive', 'assets/icons/defensive.svg');
+        this.load.image('offensive', 'assets/icons/offensive.svg');
+        this.load.image('economic', 'assets/icons/economic.svg');
+        this.load.image('energy', 'assets/icons/energy.svg');
 
         this.load.audio('wave_crash1', 'assets/audio/wave_crash1.mp3');
         this.load.audio('wave_crash2', 'assets/audio/wave_crash2.mp3');
@@ -15,9 +20,9 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.audio('wave_crash4', 'assets/audio/wave_crash4.mp3');
 
         this.load.audio('bg_audio1', 'assets/audio/bg_audio1.mp3');
-        this.load.audio('bg_audio2', 'assets/audio/bg_audio1.mp3');
-        this.load.audio('bg_audio3', 'assets/audio/bg_audio1.mp3');
-        this.load.audio('bg_audio4', 'assets/audio/bg_audio1.mp3');
+        this.load.audio('bg_audio2', 'assets/audio/bg_audio2.mp3');
+        this.load.audio('bg_audio3', 'assets/audio/bg_audio3.mp3');
+        this.load.audio('bg_audio4', 'assets/audio/bg_audio4.mp3');
     }
 
     create() {

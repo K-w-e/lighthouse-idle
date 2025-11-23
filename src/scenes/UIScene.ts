@@ -40,7 +40,7 @@ export default class UIScene extends Phaser.Scene {
     private upgradesContainer!: Phaser.GameObjects.Container;
     private currentCategory: UpgradeCategory = 'offensive';
     private shopLightText!: Phaser.GameObjects.Text;
-    private tabs: { [key in UpgradeCategory]?: Phaser.GameObjects.Text } = {};
+    private tabs: { [key in UpgradeCategory]?: Phaser.GameObjects.Image } = {};
     private tabIndicator!: Phaser.GameObjects.Graphics;
     private scrollMinY = 0;
     private scrollMaxY = 0;
@@ -342,26 +342,12 @@ export default class UIScene extends Phaser.Scene {
 
         categories.forEach((category, index) => {
             const tabX = shopX + 20 + index * tabWidth + tabWidth / 2;
-            const tab = this.add.text(tabX, 145, category.toUpperCase(), {
-                fontSize: '16px',
-                color: SHOP_TEXT_COLOR_MEDIUM,
-                fontStyle: 'bold'
-            })
-                .setOrigin(0.5)
+            const tab = this.add.image(tabX, 145, category)
+                .setScale(0.04)
                 .setInteractive({ useHandCursor: true });
 
             tab.on('pointerdown', () => {
                 this.showUpgrades(category);
-            });
-            tab.on('pointerover', () => {
-                if (this.currentCategory !== category) {
-                    tab.setColor(SHOP_TEXT_COLOR);
-                }
-            });
-            tab.on('pointerout', () => {
-                if (this.currentCategory !== category) {
-                    tab.setColor(SHOP_TEXT_COLOR_MEDIUM);
-                }
             });
 
             this.tabs[category] = tab;
@@ -404,8 +390,12 @@ export default class UIScene extends Phaser.Scene {
 
         for (const cat in this.tabs) {
             if (this.tabs[cat as UpgradeCategory]) {
-                this.tabs[cat as UpgradeCategory]!.setColor(cat === category ? SHOP_TEXT_COLOR : SHOP_TEXT_COLOR_MEDIUM);
+                this.tabs[cat as UpgradeCategory]!.clearTint();
             }
+        }
+        if (this.tabs[category]) {
+            this.tabs[category]!.setTint(ACCENT_COLOR);
+            this.tabs[category]!.setTintFill(ACCENT_COLOR);
         }
 
         const categoryUpgrades = upgrades[category];
