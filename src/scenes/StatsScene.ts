@@ -8,8 +8,6 @@ const ACCENT_COLOR = '#FBBF24';
 
 export class StatsScene extends Phaser.Scene {
     private statsContainer!: Phaser.GameObjects.Container;
-    private scrollMinY = 0;
-    private scrollMaxY = 0;
 
     constructor() {
         super('StatsScene');
@@ -44,52 +42,44 @@ export class StatsScene extends Phaser.Scene {
 
         this.statsContainer = this.add.container(0, 100);
 
-        const maskGraphics = this.make.graphics();
-        maskGraphics.fillStyle(0xffffff);
-        maskGraphics.fillRect(0, 100, width, height - 150);
-        const mask = maskGraphics.createGeometryMask();
-        this.statsContainer.setMask(mask);
-
         const stats = this.getStats();
-        let y = 0;
+        const categories = ['Offensive', 'Defensive', 'Economic', 'Energy'];
+        const cellWidth = width / 2;
+        const cellHeight = (height - 150) / 2;
+        let categoryIndex = 0;
 
-        for (const category in stats) {
-            const header = this.add.text(50, y, category, {
-                fontSize: '24px',
-                color: ACCENT_COLOR,
-                fontStyle: 'bold',
-            });
-            this.statsContainer.add(header);
-            y += 35;
+        for (let row = 0; row < 2; row++) {
+            for (let col = 0; col < 2; col++) {
+                if (categoryIndex >= categories.length) break;
 
-            stats[category].forEach(stat => {
-                const statText = this.add.text(70, y, `${stat.name}: ${stat.value}`, {
-                    fontSize: '20px',
-                    color: TEXT_COLOR,
+                const category = categories[categoryIndex];
+                const categoryStats = stats[category];
+
+                const x = col * cellWidth;
+                const y = row * cellHeight;
+
+                const cellContainer = this.add.container(x, y);
+                this.statsContainer.add(cellContainer);
+
+                const header = this.add.text(cellWidth / 2, 20, category, {
+                    fontSize: '24px',
+                    color: ACCENT_COLOR,
+                    fontStyle: 'bold',
+                }).setOrigin(0.5);
+                cellContainer.add(header);
+
+                let statY = 60;
+                categoryStats.forEach(stat => {
+                    const statText = this.add.text(40, statY, `${stat.name}: ${stat.value}`, {
+                        fontSize: '18px',
+                        color: TEXT_COLOR,
+                    });
+                    cellContainer.add(statText);
+                    statY += 30;
                 });
-                this.statsContainer.add(statText);
-                y += 30;
-            });
-            y += 15;
-        }
-
-        const totalHeight = y;
-        const visibleHeight = height - 150;
-
-        if (totalHeight > visibleHeight) {
-            this.scrollMaxY = 100;
-            this.scrollMinY = 100 - (totalHeight - visibleHeight + 50);
-        } else {
-            this.scrollMinY = 100;
-            this.scrollMaxY = 100;
-        }
-
-        this.input.on('wheel', (pointer: Phaser.Input.Pointer, gameObjects: Phaser.GameObjects.GameObject[], deltaX: number, deltaY: number) => {
-            if (this.scrollMinY !== this.scrollMaxY) {
-                this.statsContainer.y -= deltaY * 0.5;
-                this.statsContainer.y = Phaser.Math.Clamp(this.statsContainer.y, this.scrollMinY, this.scrollMaxY);
+                categoryIndex++;
             }
-        });
+        }
     }
 
     private getStats(): { [category: string]: { name: string, value: string }[] } {
@@ -126,9 +116,6 @@ export class StatsScene extends Phaser.Scene {
                 { name: 'Auto Energy Collector', value: `${gm.autoEnergyCollectorRate.toFixed(2)}/sec` },
                 { name: 'Overcharge Chance', value: `${(gm.overchargeChance * 100).toFixed(0)}%` },
             ],
-            'Wave': [
-                { name: 'Wave Number', value: gm.waveNumber.toString() },
-            ]
         };
     }
 }
