@@ -89,19 +89,36 @@ export default class UIScene extends Phaser.Scene {
             color: TEXT_COLOR,
         }).setOrigin(0, 0.5);
 
-        createButton(this, gameWidth - 150, 20, 'STATS', () => {
+        const iconSize = 40;
+        const iconPadding = 20;
+        const startX = gameWidth - iconSize / 2 - iconPadding;
+        const startY = iconSize / 2 + iconPadding;
+
+        const settingsIcon = this.add.image(startX, startY, 'icon_settings')
+            .setScale(0.05)
+            .setInteractive({ useHandCursor: true });
+
+        settingsIcon.on('pointerdown', () => {
+            if (!this.scene.isActive('SettingsScene')) {
+                this.scene.launch('SettingsScene');
+                this.scene.pause('GameScene');
+            }
+        });
+
+        this.addHoverEffect(settingsIcon);
+
+        const statsIcon = this.add.image(startX - iconSize - iconPadding, startY, 'icon_stats')
+            .setScale(0.05)
+            .setInteractive({ useHandCursor: true });
+
+        statsIcon.on('pointerdown', () => {
             if (!this.scene.isActive('StatsScene')) {
                 this.scene.launch('StatsScene');
                 this.scene.pause('GameScene');
             }
         });
 
-        createButton(this, gameWidth - 300, 20, 'SETTINGS', () => {
-            if (!this.scene.isActive('SettingsScene')) {
-                this.scene.launch('SettingsScene');
-                this.scene.pause('GameScene');
-            }
-        });
+        this.addHoverEffect(statsIcon);
 
         this.createShopUI();
 
@@ -232,13 +249,6 @@ export default class UIScene extends Phaser.Scene {
                 this.tweens.killTweensOf(this.timeWarpButton);
                 this.timeWarpButton.setScale(1);
             }
-        }
-    }
-
-    private updateLightText() {
-        const lightValue = `Light: ${Math.floor(GameManager.getLight())}`;
-        if (this.shopLightText) {
-            this.shopLightText.setText(lightValue);
         }
     }
 
@@ -485,28 +495,31 @@ export default class UIScene extends Phaser.Scene {
             this.showUpgrades(this.currentCategory);
         }
     }
-}
 
-function createButton(scene: UIScene, x: number, y: number, text: string, onClick: () => void) {
-    const buttonWidth = 140;
-    const buttonHeight = 40;
-    const buttonBackground = scene.add.graphics()
-        .fillStyle(BG_COLOR)
-        .fillRoundedRect(x, y, buttonWidth, buttonHeight, 10)
-        .lineStyle(2, BORDER_COLOR)
-        .strokeRoundedRect(x, y, buttonWidth, buttonHeight, 10);
+    private updateLightText() {
+        const lightValue = `Light: ${Math.floor(GameManager.getLight())}`;
+        if (this.shopLightText) {
+            this.shopLightText.setText(lightValue);
+        }
+    }
 
-    const buttonText = scene.add.text(x + buttonWidth / 2, y + buttonHeight / 2, text, {
-        fontSize: '20px',
-        color: TEXT_COLOR,
-        fontStyle: 'bold',
-    }).setOrigin(0.5);
+    private addHoverEffect(image: Phaser.GameObjects.Image) {
+        image.on('pointerover', () => {
+            this.tweens.add({
+                targets: image,
+                scale: 0.06,
+                duration: 100,
+                ease: 'Linear'
+            });
+        });
 
-    const hitArea = new Phaser.Geom.Rectangle(x, y, buttonWidth, buttonHeight);
-    buttonBackground.setInteractive({ hitArea, hitAreaCallback: Phaser.Geom.Rectangle.Contains, useHandCursor: true })
-        .on('pointerdown', onClick)
-        .on('pointerover', () => buttonBackground.fillStyle(BORDER_COLOR))
-        .on('pointerout', () => buttonBackground.fillStyle(BG_COLOR));
-
-    scene.children.bringToTop(buttonText);
+        image.on('pointerout', () => {
+            this.tweens.add({
+                targets: image,
+                scale: 0.05,
+                duration: 100,
+                ease: 'Linear'
+            });
+        });
+    }
 }
