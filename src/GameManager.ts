@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import GameScene from './scenes/GameScene';
 import UIScene from './scenes/UIScene';
 
+import { getUpgradeById } from './object/upgrades';
 class GameManager {
     private static instance: GameManager;
 
@@ -166,32 +167,39 @@ class GameManager {
     }
 
     public applyUpgrade(type: string) {
+        const upgrade = getUpgradeById(type);
+        if (!upgrade) {
+            return;
+        }
+
+        const value = upgrade.value || 0;
+
         switch (type) {
             // Offensive
             case 'beam_pierce':
-                this.beamPenetration += 1;
+                this.beamPenetration += value;
                 break;
             case 'beam_length':
-                this.lightRadius += 10;
+                this.lightRadius += value;
                 break;
             case 'rotation_speed':
-                this.rotationSpeed += 0.2;
+                this.rotationSpeed += value;
                 break;
             case 'slowing_pulse':
                 this.hasSlowingPulse = true;
-                this.slowingPulseSlowFactor += 0.1;
+                this.slowingPulseSlowFactor += value;
                 break;
             case 'dual_lens':
                 this.lightBeamCount = Math.max(this.lightBeamCount, 2);
                 break;
             case 'light_amplitude':
-                this.lightAngle += 5;
+                this.lightAngle += value;
                 break;
             case 'multi_lens':
-                this.lightBeamCount += 1;
+                this.lightBeamCount += value;
                 break;
             case 'chain_lightning':
-                this.chainLightningChance += 0.05;
+                this.chainLightningChance += value;
                 break;
             case 'mega_bomb':
                 this.hasMegaBomb = true;
@@ -199,11 +207,11 @@ class GameManager {
 
             // Defensive
             case 'shield_core':
-                this.maxLighthouseHealth += 10;
+                this.maxLighthouseHealth += value;
                 this.uiScene.updateLighthouseHealth(this.lighthouseHealth, this.maxLighthouseHealth);
                 break;
             case 'shield_capacitor':
-                this.lighthouseHealthRegen += 1;
+                this.lighthouseHealthRegen += value;
                 break;
             case 'auto_builder':
                 this.hasAutoBuilder = true;
@@ -215,33 +223,33 @@ class GameManager {
                 this.gameScene.expandIsland();
                 break;
             case 'island_fortification':
-                this.tileHealth += 10;
+                this.tileHealth += value;
                 break;
 
             // Economic
             case 'core_crystal':
-                this.lightPerSecond += 1;
+                this.lightPerSecond += value;
                 break;
             case 'wave_fragments':
-                this.waveFragmentsModifier += 1;
+                this.waveFragmentsModifier += value;
                 break;
             case 'kinetic_siphon':
-                this.kineticSiphonModifier += 0.5;
+                this.kineticSiphonModifier += value;
                 break;
             case 'tidal_force':
-                this.tidalForceModifier += 0.1;
+                this.tidalForceModifier += value;
                 break;
             case 'multiplier':
-                this.lightMultiplier *= 2;
+                this.lightMultiplier *= value;
                 break;
             case 'auto_light_collector':
-                this.autoLightCollectorRate += 1;
+                this.autoLightCollectorRate += value;
                 break;
             case 'light_interest':
-                this.lightInterestRate += 0.001;
+                this.lightInterestRate += value;
                 break;
             case 'sale':
-                this.saleModifier -= 0.01;
+                this.saleModifier -= value;
                 break;
             case 'time_warp':
                 this.hasTimeWarp = true;
@@ -249,23 +257,23 @@ class GameManager {
 
             // Energy
             case 'energy_capacity':
-                this.maxEnergy += 20;
+                this.maxEnergy += value;
                 this.uiScene.updateEnergy(this.currentEnergy, this.maxEnergy);
                 break;
             case 'energy_efficiency':
-                this.energyDrainRate = Math.max(0.01, this.energyDrainRate - 0.05);
+                this.energyDrainRate = Math.max(0.01, this.energyDrainRate - value);
                 break;
             case 'click_power':
-                this.energyPerClick += 0.5;
+                this.energyPerClick += value;
                 break;
             case 'auto_energy_collector':
-                this.autoEnergyCollectorRate += 1;
+                this.autoEnergyCollectorRate += value;
                 break;
             case 'overcharge':
-                this.overchargeChance += 0.01;
+                this.overchargeChance += value;
                 break;
             case 'energy_on_kill':
-                this.energyOnKill += 0.1;
+                this.energyOnKill += value;
                 break;
         }
     }

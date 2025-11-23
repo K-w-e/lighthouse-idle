@@ -1,4 +1,13 @@
-export const upgrades = {
+export interface Upgrade {
+  id: string;
+  name: string;
+  description: string;
+  cost: number;
+  costIncrease: number;
+  value?: number;
+}
+
+export const upgrades: { [key: string]: Upgrade[] } = {
   offensive: [
     {
       id: 'beam_pierce',
@@ -6,12 +15,14 @@ export const upgrades = {
       description: 'The light beam can pass through an additional enemy (+1).',
       cost: 10,
       costIncrease: 1.15,
+      value: 1,
     }, {
       id: 'beam_length',
       name: 'Beam Length',
       description: 'Increases lenght of the beam (+10).',
       cost: 20,
       costIncrease: 1.15,
+      value: 10,
     },
     {
       id: 'rotation_speed',
@@ -19,6 +30,7 @@ export const upgrades = {
       description: 'Lighthouse spins faster (+0.2).',
       cost: 100,
       costIncrease: 1.3,
+      value: 0.2,
     },
     {
       id: 'multi_lens',
@@ -26,6 +38,7 @@ export const upgrades = {
       description: 'Adds an additional light beam.',
       cost: 10000,
       costIncrease: 5,
+      value: 1,
     },
     {
       id: 'light_amplitude',
@@ -33,6 +46,7 @@ export const upgrades = {
       description: 'Increases the width of the light beam (+5°).',
       cost: 75,
       costIncrease: 1.2,
+      value: 5,
     },
     {
       id: 'chain_lightning',
@@ -40,6 +54,7 @@ export const upgrades = {
       description: 'When the light beam destroys a wave, there is a chance it will chain to a nearby wave, destroying it as well (+5% chance).',
       cost: 5000,
       costIncrease: 1.5,
+      value: 0.05,
     },
     {
       id: 'mega_bomb',
@@ -56,6 +71,7 @@ export const upgrades = {
       description: "Increases the Shield's maximum HP (+10).",
       cost: 20,
       costIncrease: 1.2,
+      value: 10,
     },
     {
       id: 'shield_capacitor',
@@ -63,6 +79,7 @@ export const upgrades = {
       description: "Increases the Shield's HP/sec regeneration (+1).",
       cost: 100,
       costIncrease: 1.3,
+      value: 1,
     },
     {
       id: 'slowing_pulse',
@@ -70,6 +87,7 @@ export const upgrades = {
       description: 'Emits a pulse every 5 seconds that slows all waves on screen. Each upgrade increase slow effect.',
       cost: 2500,
       costIncrease: 1.5,
+      value: 0.1,
     },
     {
       id: 'auto_builder',
@@ -91,6 +109,7 @@ export const upgrades = {
       description: 'Expand the island radius (+20).',
       cost: 15000,
       costIncrease: 2,
+      value: 20,
     },
     {
       id: 'island_fortification',
@@ -98,6 +117,7 @@ export const upgrades = {
       description: 'Increases the health of island tiles, making them more resistant to erosion (+10 HP).',
       cost: 1000,
       costIncrease: 1.5,
+      value: 10,
     },
   ],
   economic: [
@@ -107,6 +127,7 @@ export const upgrades = {
       description: 'Increases the passive "Light" generated per second (+1).',
       cost: 25,
       costIncrease: 1.2,
+      value: 1,
     },
     {
       id: 'wave_fragments',
@@ -114,6 +135,7 @@ export const upgrades = {
       description: 'Increases "Light" granted for killing a wave (+1).',
       cost: 50,
       costIncrease: 1.5,
+      value: 1,
     },
     {
       id: 'kinetic_siphon',
@@ -121,6 +143,7 @@ export const upgrades = {
       description: 'Waves hitting the shield grant a small bonus "Light" (+0.5).',
       cost: 100,
       costIncrease: 1.5,
+      value: 0.5,
     },
     {
       id: 'tidal_force',
@@ -128,6 +151,7 @@ export const upgrades = {
       description: 'Increases passive "Light" generation based on the number of active waves (+0.1).',
       cost: 1500,
       costIncrease: 1.8,
+      value: 0.1,
     },
     {
       id: 'multiplier',
@@ -135,6 +159,7 @@ export const upgrades = {
       description: 'Doubles all "Light" generation.',
       cost: 15000,
       costIncrease: 1, // a single purchase
+      value: 2,
     },
     {
       id: 'auto_light_collector',
@@ -142,6 +167,7 @@ export const upgrades = {
       description: 'Passively collects light from waves (+1/sec).',
       cost: 1000,
       costIncrease: 1.4,
+      value: 1,
     },
     {
       id: 'light_interest',
@@ -149,6 +175,7 @@ export const upgrades = {
       description: 'Passively generate "Light" based on a percentage of your current "Light" total (+0.1%).',
       cost: 7500,
       costIncrease: 2.5,
+      value: 0.001,
     },
     {
       id: 'sale',
@@ -156,6 +183,7 @@ export const upgrades = {
       description: 'Reduces the cost of all upgrades (-1%).',
       cost: 20000,
       costIncrease: 1.9,
+      value: 0.01,
     },
     {
       id: 'time_warp',
@@ -172,6 +200,7 @@ export const upgrades = {
       description: 'Increases maximum energy storage (+20).',
       cost: 10,
       costIncrease: 1.2,
+      value: 20,
     },
     {
       id: 'energy_efficiency',
@@ -179,6 +208,7 @@ export const upgrades = {
       description: 'Decreases energy drain rate (-0.05).',
       cost: 20,
       costIncrease: 1.3,
+      value: 0.05,
     },
     {
       id: 'click_power',
@@ -186,6 +216,7 @@ export const upgrades = {
       description: 'Increases energy gained per click (+0.5).',
       cost: 15,
       costIncrease: 1.15,
+      value: 0.5,
     },
     {
       id: 'auto_energy_collector',
@@ -193,6 +224,7 @@ export const upgrades = {
       description: 'Passively generates energy over time (+1/sec).',
       cost: 500,
       costIncrease: 1.3,
+      value: 1,
     },
     {
       id: 'overcharge',
@@ -200,6 +232,7 @@ export const upgrades = {
       description: 'Gives a small chance to receive a large energy boost when clicking the lighthouse (+1% chance).',
       cost: 2500,
       costIncrease: 1.8,
+      value: 0.01,
     },
     {
       id: 'energy_on_kill',
@@ -207,6 +240,17 @@ export const upgrades = {
       description: 'Gain a small amount of energy for each wave destroyed (+0.1).',
       cost: 5000,
       costIncrease: 1.7,
+      value: 0.1,
     },
   ],
+};
+
+export const getUpgradeById = (id: string): Upgrade | undefined => {
+  for (const category of Object.values(upgrades)) {
+    const found = category.find(u => u.id === id);
+    if (found) {
+      return found;
+    }
+  }
+  return undefined;
 };
