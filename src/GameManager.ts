@@ -74,10 +74,6 @@ class GameManager {
     public waveState: 'in_wave' | 'waiting' = 'in_wave';
     public waveDelay: number = 10; // seconds
 
-    public getWaveLightReward(): number {
-        return Math.floor(this.waveReward * this.waveFragmentsModifier * this.lightMultiplier);
-    }
-
     private constructor() { }
 
     public static getInstance(): GameManager {
@@ -278,8 +274,12 @@ class GameManager {
         }
     }
 
+    public getWaveLightReward(): number {
+        return Math.floor(this.waveReward * this.waveFragmentsModifier * this.lightMultiplier);
+    }
+
     public onWaveDestroyed() {
-        let lightToAdd = 1 * this.waveFragmentsModifier * this.lightMultiplier;
+        let lightToAdd = this.getWaveLightReward();
         this.addLight(lightToAdd);
         this.currentEnergy = Math.min(this.maxEnergy, this.currentEnergy + this.energyOnKill);
         this.uiScene.updateEnergy(this.currentEnergy, this.maxEnergy);
