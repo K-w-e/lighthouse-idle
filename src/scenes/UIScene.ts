@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import GameManager from '../GameManager';
 import { upgrades } from '../data/upgrades';
+import { SettingsManager } from '../utils/SettingsManager';
 
 type UpgradeCategory = string;
 type Upgrade = typeof upgrades[UpgradeCategory][0];
@@ -44,6 +45,7 @@ export default class UIScene extends Phaser.Scene {
     private tabIndicator!: Phaser.GameObjects.Graphics;
     private scrollMinY = 0;
     private scrollMaxY = 0;
+    private fpsText!: Phaser.GameObjects.Text;
 
     constructor() {
         super({ key: 'UIScene', active: false });
@@ -52,6 +54,14 @@ export default class UIScene extends Phaser.Scene {
     create() {
         const gameWidth = 800;
         const statsBarHeight = 80;
+
+        const settingsManager = SettingsManager.getInstance();
+
+        this.fpsText = this.add.text(10, this.cameras.main.height - 30, `FPS: ${Math.round(this.game.loop.actualFps)}`, {
+            fontSize: '18px',
+            color: TEXT_COLOR,
+        }).setOrigin(0, 1);
+        this.fpsText.setVisible(settingsManager.showFps);
 
         this.add.graphics()
             .fillStyle(BG_COLOR)
@@ -205,6 +215,10 @@ export default class UIScene extends Phaser.Scene {
 
     update() {
         this.updateLightText();
+
+        const settingsManager = SettingsManager.getInstance();
+        this.fpsText.setText(`FPS: ${Math.round(this.game.loop.actualFps)}`);
+        this.fpsText.setVisible(settingsManager.showFps);
 
         if (GameManager.hasMegaBomb) {
             this.megaBombButton.setVisible(true);

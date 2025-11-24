@@ -43,35 +43,48 @@ export class SettingsScene extends Phaser.Scene {
         const settingsManager = SettingsManager.getInstance();
 
         this.add.text(width / 2 - 150, startY, 'Music Volume', { fontSize: '20px', color: TEXT_COLOR }).setOrigin(0, 0.5);
-        const musicSlider = this.createSlider(width / 2 + 100, startY, settingsManager.musicVolume, (value) => {
+        this.createSlider(width / 2 + 100, startY, settingsManager.musicVolume, (value) => {
             settingsManager.musicVolume = value;
             settingsManager.saveSettings();
             settingsManager.applySettings(this);
         });
 
         this.add.text(width / 2 - 150, startY + gapY, 'SFX Volume', { fontSize: '20px', color: TEXT_COLOR }).setOrigin(0, 0.5);
-        const sfxSlider = this.createSlider(width / 2 + 100, startY + gapY, settingsManager.sfxVolume, (value) => {
+        this.createSlider(width / 2 + 100, startY + gapY, settingsManager.sfxVolume, (value) => {
             settingsManager.sfxVolume = value;
             settingsManager.saveSettings();
         });
 
         this.add.text(width / 2 - 150, startY + gapY * 2, 'Fullscreen', { fontSize: '20px', color: TEXT_COLOR }).setOrigin(0, 0.5);
-        const fullscreenToggle = this.createToggle(width / 2 + 50, startY + gapY * 2, settingsManager.fullscreen, (value) => {
+        this.createToggle(width / 2 + 50, startY + gapY * 2, settingsManager.fullscreen, (value) => {
             settingsManager.fullscreen = value;
             settingsManager.saveSettings();
             settingsManager.applySettings(this);
         });
 
         this.add.text(width / 2 - 150, startY + gapY * 3, 'Particles', { fontSize: '20px', color: TEXT_COLOR }).setOrigin(0, 0.5);
-        const particlesToggle = this.createToggle(width / 2 + 50, startY + gapY * 3, settingsManager.particlesEnabled, (value) => {
+        this.createToggle(width / 2 + 50, startY + gapY * 3, settingsManager.particlesEnabled, (value) => {
             settingsManager.particlesEnabled = value;
             settingsManager.saveSettings();
         });
 
         this.add.text(width / 2 - 150, startY + gapY * 4, 'Screen Shake', { fontSize: '20px', color: TEXT_COLOR }).setOrigin(0, 0.5);
-        const shakeToggle = this.createToggle(width / 2 + 50, startY + gapY * 4, settingsManager.screenShakeEnabled, (value) => {
+        this.createToggle(width / 2 + 50, startY + gapY * 4, settingsManager.screenShakeEnabled, (value) => {
             settingsManager.screenShakeEnabled = value;
             settingsManager.saveSettings();
+        });
+
+        this.add.text(width / 2 - 150, startY + gapY * 5, 'Show FPS', { fontSize: '20px', color: TEXT_COLOR }).setOrigin(0, 0.5);
+        this.createToggle(width / 2 + 50, startY + gapY * 5, settingsManager.showFps, (value) => {
+            settingsManager.showFps = value;
+            settingsManager.saveSettings();
+        });
+
+        this.add.text(width / 2 - 150, startY + gapY * 6, 'Max FPS', { fontSize: '20px', color: TEXT_COLOR }).setOrigin(0, 0.5);
+        this.createFpsSelector(width / 2 + 100, startY + gapY * 6, [30, 60, 90, 120], settingsManager.maxFps, (value) => {
+            settingsManager.maxFps = value;
+            settingsManager.saveSettings();
+            settingsManager.applySettings(this);
         });
     }
 
@@ -130,5 +143,58 @@ export class SettingsScene extends Phaser.Scene {
         });
 
         return border;
+    }
+
+    private createFpsSelector(x: number, y: number, options: number[], currentValue: number, onChange: (value: number) => void) {
+        const buttonWidth = 60;
+        const buttonHeight = 30;
+        const gap = 10;
+        const totalWidth = options.length * buttonWidth + (options.length - 1) * gap;
+        const startX = x - totalWidth / 2 + buttonWidth / 2;
+
+        const buttons: { graphics: Phaser.GameObjects.Graphics, text: Phaser.GameObjects.Text, option: number, x: number }[] = [];
+
+        const updateButtons = (selectedValue: number) => {
+            buttons.forEach(btn => {
+                const isSelected = btn.option === selectedValue;
+                const color = isSelected ? 0xFBBF24 : 0x1A2130;
+                const textColor = isSelected ? '#1A2130' : '#FFFFFF';
+
+                btn.graphics.clear();
+                btn.graphics.lineStyle(2, 0x5B6D84);
+
+                if (isSelected) {
+                    btn.graphics.fillStyle(color);
+                    btn.graphics.fillRoundedRect(btn.x - buttonWidth / 2, y - buttonHeight / 2, buttonWidth, buttonHeight, 5);
+                }
+
+                btn.graphics.strokeRoundedRect(btn.x - buttonWidth / 2, y - buttonHeight / 2, buttonWidth, buttonHeight, 5);
+
+                btn.text.setColor(textColor);
+            });
+        };
+
+        options.forEach((option, index) => {
+            const buttonX = startX + index * (buttonWidth + gap);
+
+            const graphics = this.add.graphics();
+            const text = this.add.text(buttonX, y, option.toString(), {
+                fontSize: '16px',
+                color: '#FFFFFF',
+                fontStyle: 'bold'
+            }).setOrigin(0.5);
+
+            const hitArea = new Phaser.Geom.Rectangle(buttonX - buttonWidth / 2, y - buttonHeight / 2, buttonWidth, buttonHeight);
+            graphics.setInteractive({ hitArea, hitAreaCallback: Phaser.Geom.Rectangle.Contains, useHandCursor: true });
+
+            graphics.on('pointerdown', () => {
+                onChange(option);
+                updateButtons(option);
+            });
+
+            buttons.push({ graphics, text, option, x: buttonX });
+        });
+
+        updateButtons(currentValue);
     }
 }

@@ -6,6 +6,9 @@ import { StatsScene } from './scenes/StatsScene';
 import TitleScene from './scenes/TitleScene';
 import { TutorialScene } from './scenes/TutorialScene';
 import { SettingsScene } from './scenes/SettingsScene';
+import { SettingsManager } from './utils/SettingsManager';
+
+const settingsManager = SettingsManager.getInstance();
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.WEBGL,
@@ -19,6 +22,10 @@ const config: Phaser.Types.Core.GameConfig = {
         arcade: {
             //debug: true,
         }
+    },
+    fps: {
+        target: settingsManager.maxFps,
+        limit: settingsManager.maxFps
     }
 };
 

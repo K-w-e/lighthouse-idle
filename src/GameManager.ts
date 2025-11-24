@@ -151,6 +151,7 @@ class GameManager {
 
     private endWave() {
         this.waveState = 'waiting';
+        this.waveNumber++;
         this.waveTimer = this.waveDelay;
         this.addLight(this.waveReward * this.waveNumber);
         this.uiScene.updateWaveNumber(this.waveNumber);

@@ -8,6 +8,8 @@ export class SettingsManager {
     public fullscreen: boolean = false;
     public particlesEnabled: boolean = true;
     public screenShakeEnabled: boolean = true;
+    public showFps: boolean = true;
+    public maxFps: number = 90;
 
     private constructor() {
         this.loadSettings();
@@ -24,11 +26,14 @@ export class SettingsManager {
         const savedSettings = localStorage.getItem('lighthouse-idle-settings');
         if (savedSettings) {
             const parsed = JSON.parse(savedSettings);
+            console.log(parsed);
             this.musicVolume = parsed.musicVolume ?? 0.5;
             this.sfxVolume = parsed.sfxVolume ?? 0.5;
             this.fullscreen = parsed.fullscreen ?? false;
             this.particlesEnabled = parsed.particlesEnabled ?? true;
             this.screenShakeEnabled = parsed.screenShakeEnabled ?? true;
+            this.showFps = parsed.showFps ?? true;
+            this.maxFps = parsed.maxFps ?? 60;
         }
     }
 
@@ -38,7 +43,9 @@ export class SettingsManager {
             sfxVolume: this.sfxVolume,
             fullscreen: this.fullscreen,
             particlesEnabled: this.particlesEnabled,
-            screenShakeEnabled: this.screenShakeEnabled
+            screenShakeEnabled: this.screenShakeEnabled,
+            showFps: this.showFps,
+            maxFps: this.maxFps
         };
         localStorage.setItem('lighthouse-idle-settings', JSON.stringify(settings));
     }
@@ -55,5 +62,9 @@ export class SettingsManager {
                 scene.scale.stopFullscreen();
             }
         }
+
+        scene.game.loop.targetFps = this.maxFps;
+        scene.game.loop.fpsLimit = this.maxFps;
+        (scene.game.loop as any).forceSetTimeOut = true;
     }
 }
