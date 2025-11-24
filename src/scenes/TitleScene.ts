@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import UIScene from './UIScene';
+import WaterPipeline from '../pipelines/WaterPipeline';
 
 export default class TitleScene extends Phaser.Scene {
 
@@ -12,7 +13,13 @@ export default class TitleScene extends Phaser.Scene {
         const centerX = width / 2;
         const centerY = height / 2;
 
-        this.add.image(centerX, centerY, 'background').setAlpha(0.5);
+        const renderer = this.renderer as Phaser.Renderer.WebGL.WebGLRenderer;
+        if (!renderer.pipelines.has('WaterPipeline')) {
+            renderer.pipelines.addPostPipeline('WaterPipeline', WaterPipeline);
+        }
+
+        const bg = this.add.image(centerX, centerY, 'background').setAlpha(0.5);
+        bg.setPostPipeline('WaterPipeline');
 
         this.add.text(centerX, centerY - 100, 'Waves Are Very Erosive', {
             fontSize: '36px',
@@ -34,7 +41,7 @@ export default class TitleScene extends Phaser.Scene {
             this.scene.start('GameScene');
         });
 
-        const settingsButton = this.add.text(centerX, centerY+ 70, 'Settings', {
+        const settingsButton = this.add.text(centerX, centerY + 70, 'Settings', {
             fontSize: '28px',
             color: '#ffffff',
             backgroundColor: '#333333',

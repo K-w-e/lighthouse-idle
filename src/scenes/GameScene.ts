@@ -5,6 +5,7 @@ import GameManager from '../GameManager';
 import { SettingsManager } from '../utils/SettingsManager';
 import { createLand, createVision, drawLight, getTileColor } from '../utils/draw';
 import { FloatingText } from '../object/FloatingText';
+import WaterPipeline from '../pipelines/WaterPipeline';
 
 export default class GameScene extends Phaser.Scene {
     private lighthouse!: Phaser.GameObjects.Sprite;
@@ -31,7 +32,14 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
-        this.add.image(this.gameWidth / 2, this.gameHeight / 2, 'background').setAlpha(0.5);
+        const renderer = this.renderer as Phaser.Renderer.WebGL.WebGLRenderer;
+        if (!renderer.pipelines.has('WaterPipeline')) {
+            renderer.pipelines.addPostPipeline('WaterPipeline', WaterPipeline);
+        }
+
+        const bg = this.add.image(this.gameWidth / 2, this.gameHeight / 2, 'background').setAlpha(0.5);
+        bg.setPostPipeline('WaterPipeline');
+
         this.uiScene = this.scene.get('UIScene') as UIScene;
         GameManager.initialize(this, this.uiScene);
 
