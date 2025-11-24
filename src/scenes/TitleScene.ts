@@ -34,7 +34,19 @@ export default class TitleScene extends Phaser.Scene {
             this.scene.start('GameScene');
         });
 
-        const tutorialButton = this.add.text(centerX, centerY + 70, 'Tutorial', {
+        const settingsButton = this.add.text(centerX, centerY+ 70, 'Settings', {
+            fontSize: '28px',
+            color: '#ffffff',
+            backgroundColor: '#333333',
+            padding: { x: 20, y: 10 },
+            fontFamily: 'PixelFont'
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+        settingsButton.on('pointerdown', () => {
+            this.scene.launch('SettingsScene');
+        });
+
+        const tutorialButton = this.add.text(centerX, centerY + 140, 'Tutorial', {
             fontSize: '28px',
             color: '#ffffff',
             backgroundColor: '#333333',
