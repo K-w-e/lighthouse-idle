@@ -7,7 +7,8 @@ export class FloatingText extends Phaser.GameObjects.Text {
             color: color,
             fontStyle: 'bold',
             stroke: '#000000',
-            strokeThickness: 4
+            strokeThickness: 4,
+            fontFamily: 'PixelFont',
         });
         scene.add.existing(this);
         this.setOrigin(0.5);

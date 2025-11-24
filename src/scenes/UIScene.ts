@@ -60,6 +60,7 @@ export default class UIScene extends Phaser.Scene {
         this.fpsText = this.add.text(10, this.cameras.main.height - 30, `FPS: ${Math.round(this.game.loop.actualFps)}`, {
             fontSize: '18px',
             color: TEXT_COLOR,
+            fontFamily: 'PixelFont',
         }).setOrigin(0, 1);
         this.fpsText.setVisible(settingsManager.showFps);
 
@@ -69,7 +70,7 @@ export default class UIScene extends Phaser.Scene {
             .lineStyle(2, BORDER_COLOR)
             .strokeRect(0, 0, gameWidth, statsBarHeight);
 
-        this.add.text(15, 15, 'Health', { fontSize: '18px', color: TEXT_COLOR });
+        this.add.text(15, 15, 'Health', { fontSize: '18px', color: TEXT_COLOR, fontFamily: 'PixelFont' });
         this.healthBarBg = this.add.graphics()
             .fillStyle(BG_COLOR)
             .fillRoundedRect(15, 40, 150, 25, 10)
@@ -79,7 +80,7 @@ export default class UIScene extends Phaser.Scene {
             .fillStyle(HEALTH_COLOR)
             .fillRoundedRect(0, 0, 150, 25, 10);
 
-        this.add.text(200, 15, 'Energy', { fontSize: '18px', color: TEXT_COLOR });
+        this.add.text(200, 15, 'Energy', { fontSize: '18px', color: TEXT_COLOR, fontFamily: 'PixelFont' });
         this.energyBarBg = this.add.graphics()
             .fillStyle(BG_COLOR)
             .fillRoundedRect(200, 40, 150, 25, 10)
@@ -93,10 +94,12 @@ export default class UIScene extends Phaser.Scene {
         this.waveText = this.add.text(400, 25, 'Wave: 1', {
             fontSize: '20px',
             color: TEXT_COLOR,
+            fontFamily: 'PixelFont',
         }).setOrigin(0, 0.5);
         this.waveTimerText = this.add.text(400, 55, 'Time: 30', {
             fontSize: '20px',
             color: TEXT_COLOR,
+            fontFamily: 'PixelFont',
         }).setOrigin(0, 0.5);
 
         const iconSize = 40;
@@ -150,12 +153,14 @@ export default class UIScene extends Phaser.Scene {
             fontSize: '32px',
             color: TEXT_COLOR,
             fontStyle: 'bold',
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5);
 
         this.megaBombCooldownText = this.add.text(buttonX + buttonSize / 2, buttonY + buttonSize + 15, '', {
             fontSize: '18px',
             color: TEXT_COLOR,
             fontStyle: 'bold',
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5);
 
         const hitArea = new Phaser.Geom.Rectangle(buttonX, buttonY, buttonSize, buttonSize);
@@ -188,12 +193,14 @@ export default class UIScene extends Phaser.Scene {
             fontSize: '32px',
             color: TEXT_COLOR,
             fontStyle: 'bold',
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5);
 
         this.timeWarpCooldownText = this.add.text(twButtonX + twButtonSize / 2, twButtonY + twButtonSize + 15, '', {
             fontSize: '18px',
             color: TEXT_COLOR,
             fontStyle: 'bold',
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5);
 
         const twHitArea = new Phaser.Geom.Rectangle(twButtonX, twButtonY, twButtonSize, twButtonSize);
@@ -309,6 +316,7 @@ export default class UIScene extends Phaser.Scene {
             fontSize: '64px',
             color: '#ff0000',
             fontStyle: 'bold',
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5);
     }
 
@@ -321,7 +329,8 @@ export default class UIScene extends Phaser.Scene {
             fontSize: '24px',
             color: '#FBBF24',
             fontStyle: 'bold',
-            align: 'center'
+            align: 'center',
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5);
 
         this.tweens.add({
@@ -352,11 +361,13 @@ export default class UIScene extends Phaser.Scene {
             fontSize: '28px',
             color: SHOP_TEXT_COLOR,
             fontStyle: 'bold',
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5);
 
         this.shopLightText = this.add.text(shopX + shopWidth / 2, 80, '', {
             fontSize: '22px',
             color: SHOP_ACCENT_COLOR,
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5);
         this.updateLightText();
 
@@ -439,19 +450,22 @@ export default class UIScene extends Phaser.Scene {
             const nameText = this.add.text(0, y, upgrade.name, {
                 fontSize: '18px',
                 color: SHOP_TEXT_COLOR,
-                fontStyle: 'bold'
+                fontStyle: 'bold',
+                fontFamily: 'PixelFont',
             });
 
             const descText = this.add.text(0, y + 28, upgrade.description, {
                 fontSize: '14px',
                 color: SHOP_TEXT_COLOR_MEDIUM,
-                wordWrap: { width: shopWidth - 160 }
+                wordWrap: { width: shopWidth - 160 },
+                fontFamily: 'PixelFont',
             });
 
             const costText = this.add.text(shopWidth - 40, y + 10, `Cost: ${Math.ceil(currentCost)}`, {
                 fontSize: '16px',
                 color: canAfford ? SHOP_ACCENT_COLOR : SHOP_TEXT_COLOR_DARK,
-                fontStyle: 'bold'
+                fontStyle: 'bold',
+                fontFamily: 'PixelFont',
             }).setOrigin(1, 0);
 
             const buyButton = this.add.graphics();
@@ -466,7 +480,8 @@ export default class UIScene extends Phaser.Scene {
             const buyButtonText = this.add.text(shopWidth - 90, y + 72, 'BUY', {
                 fontSize: '18px',
                 color: canAfford ? SHOP_TEXT_COLOR : SHOP_TEXT_COLOR_DARK,
-                fontStyle: 'bold'
+                fontStyle: 'bold',
+                fontFamily: 'PixelFont',
             }).setOrigin(0.5);
 
 

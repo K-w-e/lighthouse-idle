@@ -27,11 +27,13 @@ export class TutorialScene extends Phaser.Scene {
             fontSize: '32px',
             color: TEXT_COLOR,
             fontStyle: 'bold',
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5);
 
         const closeButton = this.add.text(width - 30, 30, 'X', {
             fontSize: '28px',
             color: TEXT_COLOR,
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
         closeButton.on('pointerdown', () => {
@@ -57,7 +59,8 @@ export class TutorialScene extends Phaser.Scene {
                 fontSize: '24px',
                 color: ACCENT_COLOR,
                 fontStyle: 'bold',
-                wordWrap: { width: width - 100 }
+                wordWrap: { width: width - 100 },
+                fontFamily: 'PixelFont',
             });
             this.contentContainer.add(header);
             y += 40;
@@ -65,7 +68,8 @@ export class TutorialScene extends Phaser.Scene {
             const content = this.add.text(50, y, section.content, {
                 fontSize: '18px',
                 color: TEXT_COLOR,
-                wordWrap: { width: width - 100 }
+                wordWrap: { width: width - 100 },
+                fontFamily: 'PixelFont',
             });
             this.contentContainer.add(content);
             y += content.height + 30;

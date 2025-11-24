@@ -26,11 +26,13 @@ export class StatsScene extends Phaser.Scene {
             fontSize: '32px',
             color: TEXT_COLOR,
             fontStyle: 'bold',
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5);
 
         const closeButton = this.add.text(width - 30, 30, 'X', {
             fontSize: '28px',
             color: TEXT_COLOR,
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
         closeButton.on('pointerdown', () => {
@@ -65,6 +67,7 @@ export class StatsScene extends Phaser.Scene {
                     fontSize: '24px',
                     color: ACCENT_COLOR,
                     fontStyle: 'bold',
+                    fontFamily: 'PixelFont',
                 }).setOrigin(0.5);
                 cellContainer.add(header);
 
@@ -73,6 +76,7 @@ export class StatsScene extends Phaser.Scene {
                     const statText = this.add.text(40, statY, `${stat.name}: ${stat.value}`, {
                         fontSize: '18px',
                         color: TEXT_COLOR,
+                        fontFamily: 'PixelFont',
                     });
                     cellContainer.add(statText);
                     statY += 30;

@@ -42,11 +42,13 @@ export class ShopScene extends Phaser.Scene {
             fontSize: '32px',
             color: TEXT_COLOR,
             fontStyle: 'bold',
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5);
 
         const closeButton = this.add.text(width - 30, 30, 'X', {
             fontSize: '28px',
             color: TEXT_COLOR,
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
         closeButton.on('pointerdown', () => {
@@ -59,6 +61,7 @@ export class ShopScene extends Phaser.Scene {
         this.lightText = this.add.text(width / 2, 80, '', {
             fontSize: '24px',
             color: ACCENT_COLOR,
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5);
         this.updateLightDisplay();
 
@@ -77,7 +80,8 @@ export class ShopScene extends Phaser.Scene {
             const tab = this.add.text(tabX, 145, category.toUpperCase(), {
                 fontSize: '20px',
                 color: TEXT_COLOR_MEDIUM,
-                fontStyle: 'bold'
+                fontStyle: 'bold',
+                fontFamily: 'PixelFont',
             })
                 .setOrigin(0.5)
                 .setInteractive({ useHandCursor: true });
@@ -155,19 +159,22 @@ export class ShopScene extends Phaser.Scene {
             const nameText = this.add.text(0, y, upgrade.name, {
                 fontSize: '22px',
                 color: TEXT_COLOR,
-                fontStyle: 'bold'
+                fontStyle: 'bold',
+                fontFamily: 'PixelFont',
             });
 
             const descText = this.add.text(0, y + 28, upgrade.description, {
                 fontSize: '16px',
                 color: TEXT_COLOR_MEDIUM,
-                wordWrap: { width: this.cameras.main.width - 300 }
+                wordWrap: { width: this.cameras.main.width - 300 },
+                fontFamily: 'PixelFont',
             });
 
             const costText = this.add.text(this.cameras.main.width - 200, y + 15, `Cost: ${Math.ceil(currentCost)}`, {
                 fontSize: '18px',
                 color: canAfford ? ACCENT_COLOR : TEXT_COLOR_DARK,
-                fontStyle: 'bold'
+                fontStyle: 'bold',
+                fontFamily: 'PixelFont',
             }).setOrigin(1, 0);
 
             const buyButton = this.add.graphics();
@@ -182,7 +189,8 @@ export class ShopScene extends Phaser.Scene {
             const buyButtonText = this.add.text(this.cameras.main.width - 150, y + 65, 'BUY', {
                 fontSize: '20px',
                 color: canAfford ? TEXT_COLOR : TEXT_COLOR_DARK,
-                fontStyle: 'bold'
+                fontStyle: 'bold',
+                fontFamily: 'PixelFont',
             }).setOrigin(0.5);
 
 

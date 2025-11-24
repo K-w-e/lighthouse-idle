@@ -15,16 +15,18 @@ export default class TitleScene extends Phaser.Scene {
         this.add.image(centerX, centerY, 'background').setAlpha(0.5);
 
         this.add.text(centerX, centerY - 100, 'Waves Are Very Erosive', {
-            fontSize: '48px',
+            fontSize: '36px',
             color: '#ffffff',
-            align: 'center'
+            align: 'center',
+            fontFamily: 'PixelFont'
         }).setOrigin(0.5);
 
         const startButton = this.add.text(centerX, centerY, 'Start', {
-            fontSize: '32px',
+            fontSize: '28px',
             color: '#ffffff',
             backgroundColor: '#333333',
-            padding: { x: 20, y: 10 }
+            padding: { x: 20, y: 10 },
+            fontFamily: 'PixelFont'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
         startButton.on('pointerdown', () => {
@@ -33,10 +35,11 @@ export default class TitleScene extends Phaser.Scene {
         });
 
         const tutorialButton = this.add.text(centerX, centerY + 70, 'Tutorial', {
-            fontSize: '32px',
+            fontSize: '28px',
             color: '#ffffff',
             backgroundColor: '#333333',
-            padding: { x: 20, y: 10 }
+            padding: { x: 20, y: 10 },
+            fontFamily: 'PixelFont'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
         tutorialButton.on('pointerdown', () => {

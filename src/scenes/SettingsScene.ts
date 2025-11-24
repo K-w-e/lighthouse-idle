@@ -24,11 +24,13 @@ export class SettingsScene extends Phaser.Scene {
             fontSize: '32px',
             color: TEXT_COLOR,
             fontStyle: 'bold',
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5);
 
         const closeButton = this.add.text(width - 30, 30, 'X', {
             fontSize: '28px',
             color: TEXT_COLOR,
+            fontFamily: 'PixelFont',
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
         closeButton.on('pointerdown', () => {
@@ -42,45 +44,45 @@ export class SettingsScene extends Phaser.Scene {
         const gapY = 60;
         const settingsManager = SettingsManager.getInstance();
 
-        this.add.text(width / 2 - 150, startY, 'Music Volume', { fontSize: '20px', color: TEXT_COLOR }).setOrigin(0, 0.5);
+        this.add.text(width / 2 - 150, startY, 'Music Volume', { fontSize: '20px', color: TEXT_COLOR, fontFamily: 'PixelFont' }).setOrigin(0, 0.5);
         this.createSlider(width / 2 + 100, startY, settingsManager.musicVolume, (value) => {
             settingsManager.musicVolume = value;
             settingsManager.saveSettings();
             settingsManager.applySettings(this);
         });
 
-        this.add.text(width / 2 - 150, startY + gapY, 'SFX Volume', { fontSize: '20px', color: TEXT_COLOR }).setOrigin(0, 0.5);
+        this.add.text(width / 2 - 150, startY + gapY, 'SFX Volume', { fontSize: '20px', color: TEXT_COLOR, fontFamily: 'PixelFont' }).setOrigin(0, 0.5);
         this.createSlider(width / 2 + 100, startY + gapY, settingsManager.sfxVolume, (value) => {
             settingsManager.sfxVolume = value;
             settingsManager.saveSettings();
         });
 
-        this.add.text(width / 2 - 150, startY + gapY * 2, 'Fullscreen', { fontSize: '20px', color: TEXT_COLOR }).setOrigin(0, 0.5);
+        this.add.text(width / 2 - 150, startY + gapY * 2, 'Fullscreen', { fontSize: '20px', color: TEXT_COLOR, fontFamily: 'PixelFont' }).setOrigin(0, 0.5);
         this.createToggle(width / 2 + 50, startY + gapY * 2, settingsManager.fullscreen, (value) => {
             settingsManager.fullscreen = value;
             settingsManager.saveSettings();
             settingsManager.applySettings(this);
         });
 
-        this.add.text(width / 2 - 150, startY + gapY * 3, 'Particles', { fontSize: '20px', color: TEXT_COLOR }).setOrigin(0, 0.5);
+        this.add.text(width / 2 - 150, startY + gapY * 3, 'Particles', { fontSize: '20px', color: TEXT_COLOR, fontFamily: 'PixelFont' }).setOrigin(0, 0.5);
         this.createToggle(width / 2 + 50, startY + gapY * 3, settingsManager.particlesEnabled, (value) => {
             settingsManager.particlesEnabled = value;
             settingsManager.saveSettings();
         });
 
-        this.add.text(width / 2 - 150, startY + gapY * 4, 'Screen Shake', { fontSize: '20px', color: TEXT_COLOR }).setOrigin(0, 0.5);
+        this.add.text(width / 2 - 150, startY + gapY * 4, 'Screen Shake', { fontSize: '20px', color: TEXT_COLOR, fontFamily: 'PixelFont' }).setOrigin(0, 0.5);
         this.createToggle(width / 2 + 50, startY + gapY * 4, settingsManager.screenShakeEnabled, (value) => {
             settingsManager.screenShakeEnabled = value;
             settingsManager.saveSettings();
         });
 
-        this.add.text(width / 2 - 150, startY + gapY * 5, 'Show FPS', { fontSize: '20px', color: TEXT_COLOR }).setOrigin(0, 0.5);
+        this.add.text(width / 2 - 150, startY + gapY * 5, 'Show FPS', { fontSize: '20px', color: TEXT_COLOR, fontFamily: 'PixelFont' }).setOrigin(0, 0.5);
         this.createToggle(width / 2 + 50, startY + gapY * 5, settingsManager.showFps, (value) => {
             settingsManager.showFps = value;
             settingsManager.saveSettings();
         });
 
-        this.add.text(width / 2 - 150, startY + gapY * 6, 'Max FPS', { fontSize: '20px', color: TEXT_COLOR }).setOrigin(0, 0.5);
+        this.add.text(width / 2 - 150, startY + gapY * 6, 'Max FPS', { fontSize: '20px', color: TEXT_COLOR, fontFamily: 'PixelFont' }).setOrigin(0, 0.5);
         this.createFpsSelector(width / 2 + 100, startY + gapY * 6, [30, 60, 90, 120], settingsManager.maxFps, (value) => {
             settingsManager.maxFps = value;
             settingsManager.saveSettings();
@@ -181,7 +183,8 @@ export class SettingsScene extends Phaser.Scene {
             const text = this.add.text(buttonX, y, option.toString(), {
                 fontSize: '16px',
                 color: '#FFFFFF',
-                fontStyle: 'bold'
+                fontStyle: 'bold',
+                fontFamily: 'PixelFont',
             }).setOrigin(0.5);
 
             const hitArea = new Phaser.Geom.Rectangle(buttonX - buttonWidth / 2, y - buttonHeight / 2, buttonWidth, buttonHeight);
