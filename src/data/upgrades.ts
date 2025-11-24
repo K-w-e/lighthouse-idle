@@ -9,14 +9,14 @@ export interface Upgrade {
 
 export const upgrades: { [key: string]: Upgrade[] } = {
   offensive: [
-    {
+    /*{
       id: 'beam_pierce',
       name: 'Beam Pierce',
       description: 'The light beam can pass through an additional enemy (+1).',
       cost: 10,
       costIncrease: 1.15,
       value: 1,
-    }, {
+    }, */{
       id: 'beam_length',
       name: 'Beam Length',
       description: 'Increases lenght of the beam (+10).',
@@ -50,7 +50,7 @@ export const upgrades: { [key: string]: Upgrade[] } = {
     },
     {
       id: 'chain_lightning',
-      name: 'Chain Lightning',
+      name: 'Lightning',
       description: 'When the light beam destroys a wave, there is a chance it will chain to a nearby wave, destroying it as well (+5% chance).',
       cost: 2000,
       costIncrease: 1.5,
@@ -98,27 +98,27 @@ export const upgrades: { [key: string]: Upgrade[] } = {
     },
     {
       id: 'island_reconstruction',
-      name: 'Island Reconstruction',
+      name: 'Reconstruction',
       description: 'Fully repair the island.',
       cost: 1000,
       costIncrease: 2,
     },
     {
       id: 'island_expansion',
-      name: 'Island Expansion',
+      name: 'Expansion',
       description: 'Expand the island radius (+20).',
       cost: 5000,
       costIncrease: 2,
       value: 20,
     },
-    {
+    /*{
       id: 'island_fortification',
       name: 'Island Fortification',
       description: 'Increases the health of island tiles, making them more resistant to erosion (+10 HP).',
       cost: 500,
       costIncrease: 1.5,
       value: 10,
-    },
+    },*/
   ],
   economic: [
     {
@@ -163,7 +163,7 @@ export const upgrades: { [key: string]: Upgrade[] } = {
     },
     {
       id: 'auto_light_collector',
-      name: 'Auto Light Collector',
+      name: 'Light Collector',
       description: 'Passively collects light from waves (+1/sec).',
       cost: 500,
       costIncrease: 1.4,
@@ -196,7 +196,7 @@ export const upgrades: { [key: string]: Upgrade[] } = {
   energy: [
     {
       id: 'energy_capacity',
-      name: 'Energy Capacity',
+      name: 'Capacity',
       description: 'Increases maximum energy storage (+20).',
       cost: 10,
       costIncrease: 1.2,
@@ -204,7 +204,7 @@ export const upgrades: { [key: string]: Upgrade[] } = {
     },
     {
       id: 'energy_efficiency',
-      name: 'Energy Efficiency',
+      name: 'Efficiency',
       description: 'Decreases energy drain rate (-0.05).',
       cost: 30,
       costIncrease: 1.3,
@@ -220,7 +220,7 @@ export const upgrades: { [key: string]: Upgrade[] } = {
     },
     {
       id: 'auto_energy_collector',
-      name: 'Auto Energy Collector',
+      name: 'Energy Collector',
       description: 'Passively generates energy over time (+1/sec).',
       cost: 250,
       costIncrease: 1.3,

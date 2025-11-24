@@ -448,14 +448,14 @@ export default class UIScene extends Phaser.Scene {
             const canAfford = light >= currentCost;
 
             const nameText = this.add.text(0, y, upgrade.name, {
-                fontSize: '18px',
+                fontSize: '14px',
                 color: SHOP_TEXT_COLOR,
                 fontStyle: 'bold',
                 fontFamily: 'PixelFont',
             });
 
             const descText = this.add.text(0, y + 28, upgrade.description, {
-                fontSize: '14px',
+                fontSize: '10px',
                 color: SHOP_TEXT_COLOR_MEDIUM,
                 wordWrap: { width: shopWidth - 160 },
                 fontFamily: 'PixelFont',
