@@ -63,7 +63,7 @@ export default class GameScene extends Phaser.Scene {
             gravityY: 300,
             emitting: false,
             tint: 0xffff00,
-        });
+        }).setDepth(3);
 
         this.lighthouse.on('pointerdown', () => {
             GameManager.handleLighthouseClick();
