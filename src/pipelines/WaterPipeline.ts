@@ -11,15 +11,26 @@ varying vec2 outTexCoord;
 void main()
 {
     vec2 uv = outTexCoord;
+    float strength = 0.01; 
+    float speed = 2.0;     
+    
+    float xOffset = sin(uv.y * 10.0 + uTime * speed) * 0.5 
+                  + sin(uv.y * 25.0 - uTime * speed * 1.5) * 0.3
+                  + sin(uv.x * 30.0 + uTime * speed * 0.5) * 0.2;
 
-    float speed = 1.0;
-    float frequency = 20.0;
-    float amplitude = 0.003;
+    float yOffset = cos(uv.x * 10.0 - uTime * speed) * 0.5 
+                  + cos(uv.x * 20.0 + uTime * speed * 1.2) * 0.3
+                  + cos(uv.y * 25.0 + uTime * speed * 0.8) * 0.2;
 
-    uv.y += sin(uv.x * frequency + uTime * speed) * amplitude;
-    uv.x += cos(uv.y * frequency + uTime * speed) * amplitude;
-
-    gl_FragColor = texture2D(uMainSampler, uv);
+    vec2 distortedUV = uv + vec2(xOffset, yOffset) * strength;
+    
+    float red   = texture2D(uMainSampler, distortedUV + vec2(0.002, 0.0)).r;
+    float green = texture2D(uMainSampler, distortedUV).g;
+    float blue  = texture2D(uMainSampler, distortedUV - vec2(0.002, 0.0)).b;
+    
+    vec3 finalColor = vec3(red, green, blue);
+    finalColor *= vec3(0.9, 0.95, 1.05);
+    gl_FragColor = vec4(finalColor, 1.0);
 }
 `;
 

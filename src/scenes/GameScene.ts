@@ -47,6 +47,7 @@ export default class GameScene extends Phaser.Scene {
         const centerY = this.gameHeight / 2;
 
         this.lighthouse = this.add.sprite(centerX, centerY, 'lighthouse').setScale(5);
+        this.lighthouse.setDepth(2);
         this.physics.add.existing(this.lighthouse, true);
         this.lighthouse.setInteractive({ useHandCursor: true });
 
@@ -91,6 +92,7 @@ export default class GameScene extends Phaser.Scene {
 
         const { landRT, landTiles } = createLand(this, this.lighthouse, this.landRadius);
         this.landRT = landRT;
+        this.landRT.setDepth(1).setAlpha(0.5);
         this.landTiles = landTiles;
 
         this.waves = this.physics.add.group({
@@ -203,7 +205,7 @@ export default class GameScene extends Phaser.Scene {
 
     private handleWaveLandCollision(waveObject: Phaser.GameObjects.GameObject, landTile: Phaser.GameObjects.GameObject) {
         const wave = waveObject as Wave;
-        this.erodeAt(wave.x, wave.y, Math.max(wave.body.width, 1));
+        this.erodeAt(wave.x, wave.y, Math.max(wave.body.width, 1) + 1);
         this.destroyWave(wave);
         this.sound.play('wave_crash' + Phaser.Math.Between(1, 4), { volume: SettingsManager.getInstance().sfxVolume });
         if (SettingsManager.getInstance().screenShakeEnabled) {
