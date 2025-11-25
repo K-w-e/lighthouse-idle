@@ -141,7 +141,7 @@ export default class UIScene extends Phaser.Scene {
 
         const buttonSize = 60;
         const buttonX = (gameWidth / 2) - buttonSize - 5;
-        const buttonY = this.cameras.main.height - 80;
+        const buttonY = this.cameras.main.height - 100;
 
         this.megaBombButton = this.add.graphics()
             .fillStyle(BG_COLOR)
@@ -181,7 +181,7 @@ export default class UIScene extends Phaser.Scene {
 
         const twButtonSize = 60;
         const twButtonX = (gameWidth / 2) + 5;
-        const twButtonY = this.cameras.main.height - 80;
+        const twButtonY = this.cameras.main.height - 100;
 
         this.timeWarpButton = this.add.graphics()
             .fillStyle(BG_COLOR)
@@ -252,23 +252,6 @@ export default class UIScene extends Phaser.Scene {
             } else {
                 this.timeWarpCooldownText.setText('');
                 this.timeWarpButton.setAlpha(1);
-            }
-
-            if (GameManager.isTimeWarpActive) {
-                if (!this.tweens.isTweening(this.timeWarpButton)) {
-                    this.tweens.add({
-                        targets: this.timeWarpButton,
-                        scaleX: 1.1,
-                        scaleY: 1.1,
-                        duration: 200,
-                        yoyo: true,
-                        repeat: -1,
-                        ease: 'Sine.easeInOut'
-                    });
-                }
-            } else {
-                this.tweens.killTweensOf(this.timeWarpButton);
-                this.timeWarpButton.setScale(1);
             }
         }
     }
@@ -445,7 +428,7 @@ export default class UIScene extends Phaser.Scene {
             const y = index * 110;
 
             const currentCost = upgrade.id === 'sale' ? upgrade.cost : Math.ceil(upgrade.cost * GameManager.saleModifier);
-            const canAfford = light >= currentCost;
+            const canAfford = light >= currentCost && currentCost != 0;
 
             const nameText = this.add.text(0, y, upgrade.name, {
                 fontSize: '14px',
@@ -516,7 +499,7 @@ export default class UIScene extends Phaser.Scene {
             GameManager.applyUpgrade(upgrade.id);
 
             if (upgrade.costIncrease === 1) {
-                upgrade.cost = Infinity;
+                upgrade.cost = 0;
             } else {
                 upgrade.cost = Math.ceil(upgrade.cost * upgrade.costIncrease);
             }
