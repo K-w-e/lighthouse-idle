@@ -17,6 +17,7 @@ export default class GameScene extends Phaser.Scene {
     private landTiles!: Phaser.Physics.Arcade.StaticGroup;
     private landRadius: number = 70;
     private landWaveCollider!: Phaser.Physics.Arcade.Collider;
+    private landWaveSegmentCollider!: Phaser.Physics.Arcade.Collider;
 
     private waves!: Phaser.Physics.Arcade.Group;
     private waveSegments!: Phaser.Physics.Arcade.Group;
@@ -119,10 +120,8 @@ export default class GameScene extends Phaser.Scene {
             if (wave && wave.active) this.handleWaveLighthouseCollision(lighthouse as Phaser.GameObjects.GameObject, wave);
         }, undefined, this);
 
-        this.physics.add.overlap(this.waveSegments, this.landTiles, (segment, tile) => {
-            const wave = (segment as any).parentContainer as Wave;
-            if (wave && wave.active) this.handleWaveLandCollision(wave, tile as Phaser.GameObjects.GameObject);
-        }, undefined, this);
+        //@ts-ignore
+        this.landWaveSegmentCollider = this.physics.add.overlap(this.waveSegments, this.landTiles, this.handleWaveSegmentLandCollision, undefined, this);
 
         this.events.on('applyUpgrade', this.applyUpgrade, this);
 
@@ -212,6 +211,13 @@ export default class GameScene extends Phaser.Scene {
             this.cameras.main.shake(100, 0.005);
         }
         this.cameras.main.shake(100, 0.005);
+    }
+
+    private handleWaveSegmentLandCollision(segment: Phaser.GameObjects.GameObject, tile: Phaser.GameObjects.GameObject) {
+        const wave = (segment as any).parentContainer as Wave;
+        if (wave && wave.active) {
+            this.handleWaveLandCollision(wave, tile);
+        }
     }
 
     private erodeAt(x: number, y: number, radius: number) {
@@ -386,13 +392,19 @@ export default class GameScene extends Phaser.Scene {
         if (this.landWaveCollider) {
             this.landWaveCollider.destroy();
         }
+        if (this.landWaveSegmentCollider) {
+            this.landWaveSegmentCollider.destroy();
+        }
         this.landRT.destroy();
         this.landTiles.destroy(true);
         const { landRT, landTiles } = createLand(this, this.lighthouse, this.landRadius);
         this.landRT = landRT;
+        this.landRT.setDepth(1).setAlpha(0.5);
         this.landTiles = landTiles;
         //@ts-ignore
         this.landWaveCollider = this.physics.add.overlap(this.waves, this.landTiles, this.handleWaveLandCollision, undefined, this);
+        //@ts-ignore
+        this.landWaveSegmentCollider = this.physics.add.overlap(this.waveSegments, this.landTiles, this.handleWaveSegmentLandCollision, undefined, this);
     }
 
     public expandIsland() {
