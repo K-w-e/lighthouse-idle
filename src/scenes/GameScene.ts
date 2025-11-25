@@ -12,6 +12,7 @@ export default class GameScene extends Phaser.Scene {
     private uiScene!: UIScene;
 
     private visionCone!: Phaser.GameObjects.Graphics;
+    private currentRotationAngle: number = 0;
 
     private landRT!: Phaser.GameObjects.RenderTexture;
     private landTiles!: Phaser.Physics.Arcade.StaticGroup;
@@ -137,7 +138,7 @@ export default class GameScene extends Phaser.Scene {
                 const activeWaves = this.waves.countActive(true);
                 const tidalForceBonus = activeWaves * GameManager.tidalForceModifier;
                 const interest = GameManager.getLight() * GameManager.lightInterestRate;
-                const lightToAdd = (GameManager.lightPerSecond + tidalForceBonus + interest) * GameManager.lightMultiplier;
+                const lightToAdd = (GameManager.lightPerSecond + tidalForceBonus + interest) * GameManager.lightMultiplier * GameManager.timeScale;
                 GameManager.addLight(lightToAdd);
             },
             loop: true
@@ -148,7 +149,7 @@ export default class GameScene extends Phaser.Scene {
             delay: 1000,
             callback: () => {
                 if (GameManager.autoEnergyCollectorRate > 0) {
-                    GameManager.currentEnergy = Math.min(GameManager.currentEnergy + GameManager.autoEnergyCollectorRate, GameManager.maxEnergy);
+                    GameManager.currentEnergy = Math.min(GameManager.currentEnergy + GameManager.autoEnergyCollectorRate * GameManager.timeScale, GameManager.maxEnergy);
                     this.uiScene.updateEnergy(GameManager.currentEnergy, GameManager.maxEnergy);
                 }
             },
@@ -160,7 +161,7 @@ export default class GameScene extends Phaser.Scene {
             delay: 1000,
             callback: () => {
                 if (GameManager.autoLightCollectorRate > 0) {
-                    const lightToAdd = GameManager.autoLightCollectorRate * GameManager.lightMultiplier;
+                    const lightToAdd = GameManager.autoLightCollectorRate * GameManager.lightMultiplier * GameManager.timeScale;
                     GameManager.addLight(lightToAdd);
                 }
             },
@@ -175,9 +176,9 @@ export default class GameScene extends Phaser.Scene {
         GameManager.update(delta);
 
         if (GameManager.currentEnergy > 0) {
-            const angle = (time / 10) * GameManager.rotationSpeed;
-            drawLight(this, this.visionCone, this.lighthouse, angle);
-            this.checkWaveLightCollision(angle);
+            this.currentRotationAngle += (delta / 10) * GameManager.rotationSpeed * GameManager.timeScale;
+            drawLight(this, this.visionCone, this.lighthouse, this.currentRotationAngle);
+            this.checkWaveLightCollision(this.currentRotationAngle);
         } else {
             this.visionCone.clear();
         }

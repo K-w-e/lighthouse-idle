@@ -66,6 +66,7 @@ class GameManager {
     public isTimeWarpActive: boolean = false;
     public timeWarpDuration: number = 10000; // ms
     public timeWarpDurationTimer: number = 0;
+    public timeScale: number = 1;
 
     // Wave properties
     public waveNumber: number = 1;
@@ -100,7 +101,7 @@ class GameManager {
         this.uiScene.updateEnergy(this.currentEnergy, this.maxEnergy);
 
         if (this.hasAutoBuilder) {
-            this.autoBuilderTimer += delta;
+            this.autoBuilderTimer += delta * this.timeScale;
             if (this.autoBuilderTimer >= 3000) {
                 this.autoBuilderTimer = 0;
                 this.gameScene.repairIsland();
@@ -127,7 +128,7 @@ class GameManager {
             this.timeWarpDurationTimer -= delta;
             if (this.timeWarpDurationTimer <= 0) {
                 this.isTimeWarpActive = false;
-                this.gameScene.physics.world.timeScale = 1;
+                this.timeScale = 1;
             }
         }
 
@@ -145,7 +146,7 @@ class GameManager {
             this.uiScene.updateWaveTimer(this.waveTimer, this.waveDelay);
         }
 
-        this.lighthouseHealth = Math.min(this.maxLighthouseHealth, this.lighthouseHealth + this.lighthouseHealthRegen * (delta / 1000));
+        this.lighthouseHealth = Math.min(this.maxLighthouseHealth, this.lighthouseHealth + this.lighthouseHealthRegen * (delta / 1000) * this.timeScale);
         this.uiScene.updateLighthouseHealth(this.lighthouseHealth, this.maxLighthouseHealth);
     }
 
@@ -342,7 +343,7 @@ class GameManager {
         this.timeWarpTimer = this.timeWarpCooldown;
         this.isTimeWarpActive = true;
         this.timeWarpDurationTimer = this.timeWarpDuration;
-        this.gameScene.physics.world.timeScale = 2; // Speed up time by 2x
+        this.timeScale = 2;
         this.uiScene.showInfoText('TIME WARP ACTIVATED!');
     }
 
