@@ -45,7 +45,7 @@ class GameManager {
     private autoBuilderTimer: number = 0;
 
     // Economic properties
-    private light: number = 50;
+    private light: number = 5000000000;
     public lightPerSecond: number = 0;
     public waveFragmentsModifier: number = 1;
     public kineticSiphonModifier: number = 0;
