@@ -205,7 +205,7 @@ export default class GameScene extends Phaser.Scene {
 
     private handleWaveLandCollision(waveObject: Phaser.GameObjects.GameObject, landTile: Phaser.GameObjects.GameObject) {
         const wave = waveObject as Wave;
-        this.erodeAt(wave.x, wave.y, Math.max(wave.body.width, 1) + 1);
+        this.erodeAt(wave.x, wave.y, Math.max(wave.body.width, 1) + 5);
         this.destroyWave(wave);
         this.sound.play('wave_crash' + Phaser.Math.Between(1, 4), { volume: SettingsManager.getInstance().sfxVolume });
         if (SettingsManager.getInstance().screenShakeEnabled) {
