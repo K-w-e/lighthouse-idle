@@ -36,9 +36,9 @@ export default class UIScene extends Phaser.Scene {
     private megaBombButton!: Phaser.GameObjects.Graphics;
     private megaBombText!: Phaser.GameObjects.Text;
     private megaBombCooldownText!: Phaser.GameObjects.Text;
-    private timeWarpButton!: Phaser.GameObjects.Graphics;
-    private timeWarpText!: Phaser.GameObjects.Text;
-    private timeWarpCooldownText!: Phaser.GameObjects.Text;
+    private lightSurgeButton!: Phaser.GameObjects.Graphics;
+    private lightSurgeText!: Phaser.GameObjects.Text;
+    private lightSurgeCooldownText!: Phaser.GameObjects.Text;
     private architectButton!: Phaser.GameObjects.Graphics;
     private architectText!: Phaser.GameObjects.Text;
     private architectCooldownText!: Phaser.GameObjects.Text;
@@ -236,15 +236,15 @@ export default class UIScene extends Phaser.Scene {
         const twButtonX = gameWidth / 2 + 5;
         const twButtonY = this.cameras.main.height - 100;
 
-        this.timeWarpButton = this.add
+        this.lightSurgeButton = this.add
             .graphics()
             .fillStyle(BG_COLOR)
             .fillRoundedRect(twButtonX, twButtonY, twButtonSize, twButtonSize, 10)
             .lineStyle(2, BORDER_COLOR)
             .strokeRoundedRect(twButtonX, twButtonY, twButtonSize, twButtonSize, 10);
 
-        this.timeWarpText = this.add
-            .text(twButtonX + twButtonSize / 2, twButtonY + twButtonSize / 2, 'T', {
+        this.lightSurgeText = this.add
+            .text(twButtonX + twButtonSize / 2, twButtonY + twButtonSize / 2, 'L', {
                 fontSize: '32px',
                 color: TEXT_COLOR,
                 fontStyle: 'bold',
@@ -252,7 +252,7 @@ export default class UIScene extends Phaser.Scene {
             })
             .setOrigin(0.5);
 
-        this.timeWarpCooldownText = this.add
+        this.lightSurgeCooldownText = this.add
             .text(twButtonX + twButtonSize / 2, twButtonY + twButtonSize + 15, '', {
                 fontSize: '18px',
                 color: TEXT_COLOR,
@@ -262,25 +262,25 @@ export default class UIScene extends Phaser.Scene {
             .setOrigin(0.5);
 
         const twHitArea = new Phaser.Geom.Rectangle(twButtonX, twButtonY, twButtonSize, twButtonSize);
-        this.timeWarpButton
+        this.lightSurgeButton
             .setInteractive({
                 hitArea: twHitArea,
                 hitAreaCallback: Phaser.Geom.Rectangle.Contains,
                 useHandCursor: true,
             })
-            .on('pointerdown', () => GameManager.activateTimeWarp())
+            .on('pointerdown', () => GameManager.activateLightSurge())
             .on('pointerover', () => {
-                if (GameManager.timeWarpTimer <= 0) {
-                    this.timeWarpButton.fillStyle(BORDER_COLOR);
+                if (GameManager.lightSurgeTimer <= 0) {
+                    this.lightSurgeButton.fillStyle(BORDER_COLOR);
                 }
             })
             .on('pointerout', () => {
-                this.timeWarpButton.fillStyle(BG_COLOR);
+                this.lightSurgeButton.fillStyle(BG_COLOR);
             });
 
-        this.timeWarpButton.setVisible(false);
-        this.timeWarpText.setVisible(false);
-        this.timeWarpCooldownText.setVisible(false);
+        this.lightSurgeButton.setVisible(false);
+        this.lightSurgeText.setVisible(false);
+        this.lightSurgeCooldownText.setVisible(false);
 
         const archButtonSize = 60;
         const archButtonX = gameWidth / 2 - buttonSize - 5 - buttonSize - 5;
@@ -354,17 +354,31 @@ export default class UIScene extends Phaser.Scene {
             }
         }
 
-        if (GameManager.hasTimeWarp) {
-            this.timeWarpButton.setVisible(true);
-            this.timeWarpText.setVisible(true);
-            this.timeWarpCooldownText.setVisible(true);
+        if (GameManager.hasLightSurge) {
+            this.lightSurgeButton.setVisible(true);
+            this.lightSurgeText.setVisible(true);
+            this.lightSurgeCooldownText.setVisible(true);
 
-            if (GameManager.timeWarpTimer > 0) {
-                this.timeWarpCooldownText.setText(`${Math.ceil(GameManager.timeWarpTimer / 1000)}s`);
-                this.timeWarpButton.setAlpha(0.5);
+            if (GameManager.lightSurgeTimer > 0) {
+                this.lightSurgeCooldownText.setText(`${Math.ceil(GameManager.lightSurgeTimer / 1000)}s`);
+                this.lightSurgeButton.setAlpha(0.5);
             } else {
-                this.timeWarpCooldownText.setText('');
-                this.timeWarpButton.setAlpha(1);
+                this.lightSurgeCooldownText.setText('');
+                this.lightSurgeButton.setAlpha(1);
+            }
+        }
+
+        if (PrestigeManager.activeArchetype === ArchetypeID.ARCHITECT) {
+            this.architectButton.setVisible(true);
+            this.architectText.setVisible(true);
+            this.architectCooldownText.setVisible(true);
+
+            if (GameManager.invulnerableCooldownTimer > 0) {
+                this.architectCooldownText.setText(`${Math.ceil(GameManager.invulnerableCooldownTimer / 1000)}s`);
+                this.architectButton.setAlpha(0.5);
+            } else {
+                this.architectCooldownText.setText('');
+                this.architectButton.setAlpha(1);
             }
         }
     }

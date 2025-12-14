@@ -15,18 +15,11 @@ export const RELICS: Relic[] = [
         effectDescription: 'Enemies drop 300% Light but move 50% faster.',
     },
     {
-        id: 'void_anchor',
-        name: 'Void Anchor',
-        description: 'An anchor that binds the lighthouse to the void.',
-        cost: 15,
-        effectDescription: 'Cannot move/rotate. Pulse hits 360 degrees.',
-    },
-    {
         id: 'solar_sail',
         name: 'Solar Sail',
         description: 'Captures the raw essence of the sun.',
         cost: 20,
-        effectDescription: 'Energy regenerates 2x faster. Max Health set to 1.',
+        effectDescription: 'Energy regenerates 2x faster. Max Health low, Regen high.',
     },
 ];
 

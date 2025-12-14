@@ -210,9 +210,7 @@ export default class GameScene extends Phaser.Scene {
         GameManager.update(delta);
 
         if (GameManager.currentEnergy > 0) {
-            if (!GameManager.rotationLocked) {
-                this.currentRotationAngle += (delta / 10) * GameManager.rotationSpeed * GameManager.timeScale;
-            }
+            this.currentRotationAngle += (delta / 10) * GameManager.rotationSpeed * GameManager.timeScale;
             drawLight(this, this.visionCone, this.lighthouse, this.currentRotationAngle);
             this.checkWaveLightCollision(this.currentRotationAngle);
         } else {
@@ -247,6 +245,9 @@ export default class GameScene extends Phaser.Scene {
         waveObject: Phaser.GameObjects.GameObject,
         landTile: Phaser.GameObjects.GameObject,
     ) {
+        if (this.isInvulnerable) {
+            return; // No damage if invulnerable
+        }
         const wave = waveObject as Wave;
         this.erodeAt(wave.x, wave.y, Math.max(wave.body.width, 1) + 5);
         this.destroyWave(wave);
@@ -363,7 +364,7 @@ export default class GameScene extends Phaser.Scene {
 
             for (let i = 0; i < Math.min(wavesInBeam.length, GameManager.beamPenetration); i++) {
                 const waveToDestroy = wavesInBeam[i];
-                const damage = 1;
+                const damage = GameManager.beamDamage;
                 waveToDestroy.health -= damage;
 
                 if (SettingsManager.getInstance().particlesEnabled) {

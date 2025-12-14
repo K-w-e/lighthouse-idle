@@ -43,6 +43,7 @@ class GameManager {
     public maxLighthouseHealth: number = 100;
     public lighthouseHealthRegen: number = 1;
     public tileHealth: number = 10;
+    public beamDamage: number = 1;
     public hasAutoBuilder: boolean = false;
     private autoBuilderTimer: number = 0;
     public isInvulnerable: boolean = false;
@@ -67,12 +68,14 @@ class GameManager {
     public megaBombCooldown: number = 60000; // ms
     public megaBombTimer: number = 0;
 
-    public hasTimeWarp: boolean = false;
-    public timeWarpCooldown: number = 120000; // ms
-    public timeWarpTimer: number = 0;
-    public isTimeWarpActive: boolean = false;
-    public timeWarpDuration: number = 10000; // ms
-    public timeWarpDurationTimer: number = 0;
+    public hasLightSurge: boolean = false;
+    public lightSurgeCooldown: number = 90000; // ms
+    public lightSurgeTimer: number = 0;
+    public isLightSurgeActive: boolean = false;
+    public lightSurgeDuration: number = 3000; // ms
+    public lightSurgeDurationTimer: number = 0;
+    private surgeAddedRadius: number = 0;
+    private surgeAddedAngle: number = 0;
     public timeScale: number = 1;
 
     // Wave properties
@@ -84,7 +87,6 @@ class GameManager {
     public waveDelay: number = 10; // seconds
 
     public enemySpeedModifier: number = 1;
-    public rotationLocked: boolean = false;
     public baseTimeScale: number = 1;
 
     private constructor() {}
@@ -135,15 +137,14 @@ class GameManager {
             this.megaBombTimer -= delta;
         }
 
-        if (this.hasTimeWarp) {
-            this.timeWarpTimer -= delta;
+        if (this.hasLightSurge) {
+            this.lightSurgeTimer -= delta;
         }
 
-        if (this.isTimeWarpActive) {
-            this.timeWarpDurationTimer -= delta;
-            if (this.timeWarpDurationTimer <= 0) {
-                this.isTimeWarpActive = false;
-                this.timeScale = this.baseTimeScale;
+        if (this.isLightSurgeActive) {
+            this.lightSurgeDurationTimer -= delta;
+            if (this.lightSurgeDurationTimer <= 0) {
+                this.deactivateLightSurge();
             }
         }
 
@@ -279,7 +280,8 @@ class GameManager {
                 this.saleModifier -= value;
                 break;
             case 'time_warp':
-                this.hasTimeWarp = true;
+            case 'light_surge':
+                this.hasLightSurge = true;
                 break;
 
             // Energy
@@ -361,21 +363,35 @@ class GameManager {
         this.gameScene.triggerMegaBomb();
     }
 
-    public activateTimeWarp() {
-        if (!this.hasTimeWarp) {
+    public activateLightSurge() {
+        if (!this.hasLightSurge) {
             return;
         }
 
-        if (this.timeWarpTimer > 0) {
-            this.uiScene.showInfoText(`Time Warp on cooldown for ${Math.ceil(this.timeWarpTimer / 1000)}s`);
+        if (this.lightSurgeTimer > 0) {
+            this.uiScene.showInfoText(`Light Surge on cooldown for ${Math.ceil(this.lightSurgeTimer / 1000)}s`);
             return;
         }
 
-        this.timeWarpTimer = this.timeWarpCooldown;
-        this.isTimeWarpActive = true;
-        this.timeWarpDurationTimer = this.timeWarpDuration;
-        this.timeScale = 2 * this.baseTimeScale;
-        this.uiScene.showInfoText('TIME WARP ACTIVATED!');
+        this.lightSurgeTimer = this.lightSurgeCooldown;
+        this.isLightSurgeActive = true;
+        this.lightSurgeDurationTimer = this.lightSurgeDuration;
+
+        // Boost Light
+        this.surgeAddedRadius = 300; // Big increase
+        this.surgeAddedAngle = 45;
+        this.lightRadius += this.surgeAddedRadius;
+        this.lightAngle += this.surgeAddedAngle;
+
+        this.uiScene.showInfoText('LIGHT SURGE ACTIVATED!');
+    }
+
+    private deactivateLightSurge() {
+        this.isLightSurgeActive = false;
+        this.lightRadius -= this.surgeAddedRadius;
+        this.lightAngle -= this.surgeAddedAngle;
+        this.surgeAddedRadius = 0;
+        this.surgeAddedAngle = 0;
     }
 
     public activateInvulnerability() {
@@ -406,11 +422,8 @@ class GameManager {
 
         if (archetype === ArchetypeID.CHRONOMANCER) {
             console.log('Archetype: Chronomancer Active');
-            this.hasTimeWarp = true;
+            this.hasLightSurge = true;
             this.baseTimeScale = 1.2;
-            this.megaBombCooldown *= 0.8;
-            this.timeWarpCooldown *= 0.8;
-            this.slowingPulseCooldown *= 0.8;
         } else if (archetype === ArchetypeID.STORMBRINGER) {
             console.log('Archetype: Stormbringer Active');
             this.hasMegaBomb = true;
@@ -418,24 +431,19 @@ class GameManager {
         } else if (archetype === ArchetypeID.ARCHITECT) {
             console.log('Archetype: Architect Active');
             this.hasAutoBuilder = true;
-            this.hasSlowingPulse = true;
-            this.slowingPulseDuration = 5000;
             this.autoBuilderTimer = 0;
         }
 
         if (relics.includes('prism_of_greed')) {
             this.lightMultiplier *= 3;
-            this.enemySpeedModifier = 1.5;
+            this.enemySpeedModifier = 1.8;
         }
         if (relics.includes('solar_sail')) {
             this.energyDrainRate *= 0.5;
-            this.maxLighthouseHealth = 1;
-            this.lighthouseHealth = 1;
+            this.maxLighthouseHealth = 20;
+            this.lighthouseHealth = 20;
+            this.lighthouseHealthRegen = 20;
             this.uiScene.updateLighthouseHealth(this.lighthouseHealth, this.maxLighthouseHealth);
-        }
-        if (relics.includes('void_anchor')) {
-            this.rotationLocked = true;
-            this.lightAngle = 360;
         }
     }
 }

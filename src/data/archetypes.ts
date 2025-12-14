@@ -24,9 +24,9 @@ export const ARCHETYPES: Record<ArchetypeID, Archetype> = {
     [ArchetypeID.CHRONOMANCER]: {
         id: ArchetypeID.CHRONOMANCER,
         name: 'The Chronomancer',
-        description: 'Master of time manipulation.',
+        description: 'Manipulates the flow of time to gain an advantage.',
         passiveDescription: 'Logic ticks 20% faster.',
-        activeAbilityDescription: 'Stasis Field: Freeze wave timer.',
+        activeAbilityDescription: 'Light Surge: Temporarily expand light beam.',
     },
     [ArchetypeID.STORMBRINGER]: {
         id: ArchetypeID.STORMBRINGER,
