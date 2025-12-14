@@ -1,27 +1,29 @@
-import Phaser from 'phaser';
-import GameManager from '../GameManager';
-import { upgrades } from '../data/upgrades';
-import { SettingsManager } from '../utils/SettingsManager';
+import Phaser from "phaser";
+import GameManager from "../GameManager";
+import { upgrades } from "../data/upgrades";
+import { SettingsManager } from "../utils/SettingsManager";
+import PrestigeManager from "../managers/PrestigeManager";
+import { ArchetypeID } from "../data/archetypes";
 
 type UpgradeCategory = string;
-type Upgrade = typeof upgrades[UpgradeCategory][0];
+type Upgrade = (typeof upgrades)[UpgradeCategory][0];
 
-const SHOP_BORDER_COLOR = 0x5B6D84;
-const SHOP_BG_COLOR = 0x1A2130;
-const SHOP_TAB_BG_COLOR = 0x2A3140;
-const SHOP_TEXT_COLOR = '#FFFFFF';
-const SHOP_TEXT_COLOR_MEDIUM = '#D1D5DB';
-const SHOP_TEXT_COLOR_DARK = '#6B7280';
-const SHOP_ACCENT_COLOR = '#FBBF24';
-const SHOP_BUY_BUTTON_COLOR = 0x10B981;
-const SHOP_BUY_BUTTON_COLOR_HOVER = 0x34D399;
-const SHOP_DISABLED_BUTTON_COLOR = 0x4B5563;
+const SHOP_BORDER_COLOR = 0x5b6d84;
+const SHOP_BG_COLOR = 0x1a2130;
+const SHOP_TAB_BG_COLOR = 0x2a3140;
+const SHOP_TEXT_COLOR = "#FFFFFF";
+const SHOP_TEXT_COLOR_MEDIUM = "#D1D5DB";
+const SHOP_TEXT_COLOR_DARK = "#6B7280";
+const SHOP_ACCENT_COLOR = "#FBBF24";
+const SHOP_BUY_BUTTON_COLOR = 0x10b981;
+const SHOP_BUY_BUTTON_COLOR_HOVER = 0x34d399;
+const SHOP_DISABLED_BUTTON_COLOR = 0x4b5563;
 
-const BORDER_COLOR = 0x5B6D84;
-const BG_COLOR = 0x1A2130;
-const TEXT_COLOR = '#FFFFFF';
-const ACCENT_COLOR = 0xFBBF24;
-const HEALTH_COLOR = 0xFF0000;
+const BORDER_COLOR = 0x5b6d84;
+const BG_COLOR = 0x1a2130;
+const TEXT_COLOR = "#FFFFFF";
+const ACCENT_COLOR = 0xfbbf24;
+const HEALTH_COLOR = 0xff0000;
 
 export default class UIScene extends Phaser.Scene {
     private energyBar!: Phaser.GameObjects.Graphics;
@@ -37,9 +39,12 @@ export default class UIScene extends Phaser.Scene {
     private timeWarpButton!: Phaser.GameObjects.Graphics;
     private timeWarpText!: Phaser.GameObjects.Text;
     private timeWarpCooldownText!: Phaser.GameObjects.Text;
+    private architectButton!: Phaser.GameObjects.Graphics;
+    private architectText!: Phaser.GameObjects.Text;
+    private architectCooldownText!: Phaser.GameObjects.Text;
 
     private upgradesContainer!: Phaser.GameObjects.Container;
-    private currentCategory: UpgradeCategory = 'offensive';
+    private currentCategory: UpgradeCategory = "offensive";
     private shopLightText!: Phaser.GameObjects.Text;
     private tabs: { [key in UpgradeCategory]?: Phaser.GameObjects.Image } = {};
     private tabIndicator!: Phaser.GameObjects.Graphics;
@@ -48,7 +53,7 @@ export default class UIScene extends Phaser.Scene {
     private fpsText!: Phaser.GameObjects.Text;
 
     constructor() {
-        super({ key: 'UIScene', active: false });
+        super({ key: "UIScene", active: false });
     }
 
     create() {
@@ -57,81 +62,127 @@ export default class UIScene extends Phaser.Scene {
 
         const settingsManager = SettingsManager.getInstance();
 
-        this.fpsText = this.add.text(10, this.cameras.main.height - 30, `FPS: ${Math.round(this.game.loop.actualFps)}`, {
-            fontSize: '18px',
-            color: TEXT_COLOR,
-            fontFamily: 'PixelFont',
-        }).setOrigin(0, 1);
+        this.fpsText = this.add
+            .text(
+                10,
+                this.cameras.main.height - 30,
+                `FPS: ${Math.round(this.game.loop.actualFps)}`,
+                {
+                    fontSize: "18px",
+                    color: TEXT_COLOR,
+                    fontFamily: "PixelFont",
+                },
+            )
+            .setOrigin(0, 1);
         this.fpsText.setVisible(settingsManager.showFps);
 
-        this.add.graphics()
+        this.add
+            .graphics()
             .fillStyle(BG_COLOR)
             .fillRect(0, 0, gameWidth, statsBarHeight)
             .lineStyle(2, BORDER_COLOR)
             .strokeRect(0, 0, gameWidth, statsBarHeight);
 
-        this.add.text(15, 15, 'Health', { fontSize: '18px', color: TEXT_COLOR, fontFamily: 'PixelFont' });
-        this.healthBarBg = this.add.graphics()
+        this.add.text(15, 15, "Health", {
+            fontSize: "18px",
+            color: TEXT_COLOR,
+            fontFamily: "PixelFont",
+        });
+        this.healthBarBg = this.add
+            .graphics()
             .fillStyle(BG_COLOR)
             .fillRoundedRect(15, 40, 150, 25, 10)
             .lineStyle(2, BORDER_COLOR)
             .strokeRoundedRect(15, 40, 150, 25, 10);
-        this.healthBar = this.add.graphics({ x: 15, y: 40 })
+        this.healthBar = this.add
+            .graphics({ x: 15, y: 40 })
             .fillStyle(HEALTH_COLOR)
             .fillRoundedRect(0, 0, 150, 25, 10);
 
-        this.add.text(200, 15, 'Energy', { fontSize: '18px', color: TEXT_COLOR, fontFamily: 'PixelFont' });
-        this.energyBarBg = this.add.graphics()
+        this.add.text(200, 15, "Energy", {
+            fontSize: "18px",
+            color: TEXT_COLOR,
+            fontFamily: "PixelFont",
+        });
+        this.energyBarBg = this.add
+            .graphics()
             .fillStyle(BG_COLOR)
             .fillRoundedRect(200, 40, 150, 25, 10)
             .lineStyle(2, BORDER_COLOR)
             .strokeRoundedRect(200, 40, 150, 25, 10);
-        this.energyBar = this.add.graphics({ x: 200, y: 40 })
+        this.energyBar = this.add
+            .graphics({ x: 200, y: 40 })
             .fillStyle(ACCENT_COLOR)
             .fillRoundedRect(0, 0, 150, 25, 10);
         this.energyBar.scaleX = 0;
 
-        this.waveText = this.add.text(400, 25, 'Wave: 1', {
-            fontSize: '20px',
-            color: TEXT_COLOR,
-            fontFamily: 'PixelFont',
-        }).setOrigin(0, 0.5);
-        this.waveTimerText = this.add.text(400, 55, 'Time: 30', {
-            fontSize: '20px',
-            color: TEXT_COLOR,
-            fontFamily: 'PixelFont',
-        }).setOrigin(0, 0.5);
+        this.waveText = this.add
+            .text(400, 25, "Wave: 1", {
+                fontSize: "20px",
+                color: TEXT_COLOR,
+                fontFamily: "PixelFont",
+            })
+            .setOrigin(0, 0.5);
+        this.waveTimerText = this.add
+            .text(400, 55, "Time: 30", {
+                fontSize: "20px",
+                color: TEXT_COLOR,
+                fontFamily: "PixelFont",
+            })
+            .setOrigin(0, 0.5);
 
         const iconSize = 40;
         const iconPadding = 20;
         const startX = gameWidth - iconSize / 2 - iconPadding;
         const startY = iconSize / 2 + iconPadding;
 
-        const settingsIcon = this.add.image(startX, startY, 'icon_settings')
+        const settingsIcon = this.add
+            .image(startX, startY, "icon_settings")
             .setScale(0.05)
             .setInteractive({ useHandCursor: true });
 
-        settingsIcon.on('pointerdown', () => {
-            if (!this.scene.isActive('SettingsScene')) {
-                this.scene.launch('SettingsScene');
-                this.scene.pause('GameScene');
+        settingsIcon.on("pointerdown", () => {
+            if (!this.scene.isActive("SettingsScene")) {
+                this.scene.launch("SettingsScene");
+                this.scene.pause("GameScene");
             }
         });
 
         this.addHoverEffect(settingsIcon);
 
-        const statsIcon = this.add.image(startX - iconSize - iconPadding, startY, 'icon_stats')
+        const statsIcon = this.add
+            .image(startX - iconSize - iconPadding, startY, "icon_stats")
             .setScale(0.05)
             .setInteractive({ useHandCursor: true });
 
-        statsIcon.on('pointerdown', () => {
-            if (!this.scene.isActive('StatsScene')) {
-                this.scene.launch('StatsScene');
-                this.scene.pause('GameScene');
+        statsIcon.on("pointerdown", () => {
+            if (!this.scene.isActive("StatsScene")) {
+                this.scene.launch("StatsScene");
+                this.scene.pause("GameScene");
             }
         });
 
         this.addHoverEffect(statsIcon);
+
+        const prestigeIcon = this.add
+            .text(startX - (iconSize + iconPadding) * 2, startY, "P", {
+                fontSize: "24px",
+                color: "#A78BFA",
+                fontStyle: "bold",
+                fontFamily: "PixelFont",
+            })
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true });
+
+        prestigeIcon.on("pointerdown", () => {
+            if (!this.scene.isActive("PrestigeScene")) {
+                this.scene.launch("PrestigeScene");
+                this.scene.pause("GameScene");
+            }
+        });
+
+        prestigeIcon.on("pointerover", () => prestigeIcon.setColor("#F472B6"));
+        prestigeIcon.on("pointerout", () => prestigeIcon.setColor("#A78BFA"));
 
         this.createShopUI();
 
@@ -140,38 +191,53 @@ export default class UIScene extends Phaser.Scene {
         this.updateLighthouseHealth(1, 1);
 
         const buttonSize = 60;
-        const buttonX = (gameWidth / 2) - buttonSize - 5;
+        const buttonX = gameWidth / 2 - buttonSize - 5;
         const buttonY = this.cameras.main.height - 100;
 
-        this.megaBombButton = this.add.graphics()
+        this.megaBombButton = this.add
+            .graphics()
             .fillStyle(BG_COLOR)
             .fillRoundedRect(buttonX, buttonY, buttonSize, buttonSize, 10)
             .lineStyle(2, BORDER_COLOR)
             .strokeRoundedRect(buttonX, buttonY, buttonSize, buttonSize, 10);
 
-        this.megaBombText = this.add.text(buttonX + buttonSize / 2, buttonY + buttonSize / 2, 'B', {
-            fontSize: '32px',
-            color: TEXT_COLOR,
-            fontStyle: 'bold',
-            fontFamily: 'PixelFont',
-        }).setOrigin(0.5);
+        this.megaBombText = this.add
+            .text(buttonX + buttonSize / 2, buttonY + buttonSize / 2, "B", {
+                fontSize: "32px",
+                color: TEXT_COLOR,
+                fontStyle: "bold",
+                fontFamily: "PixelFont",
+            })
+            .setOrigin(0.5);
 
-        this.megaBombCooldownText = this.add.text(buttonX + buttonSize / 2, buttonY + buttonSize + 15, '', {
-            fontSize: '18px',
-            color: TEXT_COLOR,
-            fontStyle: 'bold',
-            fontFamily: 'PixelFont',
-        }).setOrigin(0.5);
+        this.megaBombCooldownText = this.add
+            .text(buttonX + buttonSize / 2, buttonY + buttonSize + 15, "", {
+                fontSize: "18px",
+                color: TEXT_COLOR,
+                fontStyle: "bold",
+                fontFamily: "PixelFont",
+            })
+            .setOrigin(0.5);
 
-        const hitArea = new Phaser.Geom.Rectangle(buttonX, buttonY, buttonSize, buttonSize);
-        this.megaBombButton.setInteractive({ hitArea, hitAreaCallback: Phaser.Geom.Rectangle.Contains, useHandCursor: true })
-            .on('pointerdown', () => GameManager.activateMegaBomb())
-            .on('pointerover', () => {
+        const hitArea = new Phaser.Geom.Rectangle(
+            buttonX,
+            buttonY,
+            buttonSize,
+            buttonSize,
+        );
+        this.megaBombButton
+            .setInteractive({
+                hitArea,
+                hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+                useHandCursor: true,
+            })
+            .on("pointerdown", () => GameManager.activateMegaBomb())
+            .on("pointerover", () => {
                 if (GameManager.megaBombTimer <= 0) {
                     this.megaBombButton.fillStyle(BORDER_COLOR);
                 }
             })
-            .on('pointerout', () => {
+            .on("pointerout", () => {
                 this.megaBombButton.fillStyle(BG_COLOR);
             });
 
@@ -180,44 +246,158 @@ export default class UIScene extends Phaser.Scene {
         this.megaBombCooldownText.setVisible(false);
 
         const twButtonSize = 60;
-        const twButtonX = (gameWidth / 2) + 5;
+        const twButtonX = gameWidth / 2 + 5;
         const twButtonY = this.cameras.main.height - 100;
 
-        this.timeWarpButton = this.add.graphics()
+        this.timeWarpButton = this.add
+            .graphics()
             .fillStyle(BG_COLOR)
-            .fillRoundedRect(twButtonX, twButtonY, twButtonSize, twButtonSize, 10)
+            .fillRoundedRect(
+                twButtonX,
+                twButtonY,
+                twButtonSize,
+                twButtonSize,
+                10,
+            )
             .lineStyle(2, BORDER_COLOR)
-            .strokeRoundedRect(twButtonX, twButtonY, twButtonSize, twButtonSize, 10);
+            .strokeRoundedRect(
+                twButtonX,
+                twButtonY,
+                twButtonSize,
+                twButtonSize,
+                10,
+            );
 
-        this.timeWarpText = this.add.text(twButtonX + twButtonSize / 2, twButtonY + twButtonSize / 2, 'T', {
-            fontSize: '32px',
-            color: TEXT_COLOR,
-            fontStyle: 'bold',
-            fontFamily: 'PixelFont',
-        }).setOrigin(0.5);
+        this.timeWarpText = this.add
+            .text(
+                twButtonX + twButtonSize / 2,
+                twButtonY + twButtonSize / 2,
+                "T",
+                {
+                    fontSize: "32px",
+                    color: TEXT_COLOR,
+                    fontStyle: "bold",
+                    fontFamily: "PixelFont",
+                },
+            )
+            .setOrigin(0.5);
 
-        this.timeWarpCooldownText = this.add.text(twButtonX + twButtonSize / 2, twButtonY + twButtonSize + 15, '', {
-            fontSize: '18px',
-            color: TEXT_COLOR,
-            fontStyle: 'bold',
-            fontFamily: 'PixelFont',
-        }).setOrigin(0.5);
+        this.timeWarpCooldownText = this.add
+            .text(
+                twButtonX + twButtonSize / 2,
+                twButtonY + twButtonSize + 15,
+                "",
+                {
+                    fontSize: "18px",
+                    color: TEXT_COLOR,
+                    fontStyle: "bold",
+                    fontFamily: "PixelFont",
+                },
+            )
+            .setOrigin(0.5);
 
-        const twHitArea = new Phaser.Geom.Rectangle(twButtonX, twButtonY, twButtonSize, twButtonSize);
-        this.timeWarpButton.setInteractive({ hitArea: twHitArea, hitAreaCallback: Phaser.Geom.Rectangle.Contains, useHandCursor: true })
-            .on('pointerdown', () => GameManager.activateTimeWarp())
-            .on('pointerover', () => {
+        const twHitArea = new Phaser.Geom.Rectangle(
+            twButtonX,
+            twButtonY,
+            twButtonSize,
+            twButtonSize,
+        );
+        this.timeWarpButton
+            .setInteractive({
+                hitArea: twHitArea,
+                hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+                useHandCursor: true,
+            })
+            .on("pointerdown", () => GameManager.activateTimeWarp())
+            .on("pointerover", () => {
                 if (GameManager.timeWarpTimer <= 0) {
                     this.timeWarpButton.fillStyle(BORDER_COLOR);
                 }
             })
-            .on('pointerout', () => {
+            .on("pointerout", () => {
                 this.timeWarpButton.fillStyle(BG_COLOR);
             });
 
         this.timeWarpButton.setVisible(false);
         this.timeWarpText.setVisible(false);
         this.timeWarpCooldownText.setVisible(false);
+
+        const archButtonSize = 60;
+        const archButtonX = gameWidth / 2 - buttonSize - 5 - buttonSize - 5;
+        const archButtonY = this.cameras.main.height - 100;
+
+        this.architectButton = this.add
+            .graphics()
+            .fillStyle(BG_COLOR)
+            .fillRoundedRect(
+                archButtonX,
+                archButtonY,
+                archButtonSize,
+                archButtonSize,
+                10,
+            )
+            .lineStyle(2, 0x10b981)
+            .strokeRoundedRect(
+                archButtonX,
+                archButtonY,
+                archButtonSize,
+                archButtonSize,
+                10,
+            );
+
+        this.architectText = this.add
+            .text(
+                archButtonX + archButtonSize / 2,
+                archButtonY + archButtonSize / 2,
+                "A",
+                {
+                    fontSize: "32px",
+                    color: TEXT_COLOR,
+                    fontStyle: "bold",
+                    fontFamily: "PixelFont",
+                },
+            )
+            .setOrigin(0.5);
+
+        this.architectCooldownText = this.add
+            .text(
+                archButtonX + archButtonSize / 2,
+                archButtonY + archButtonSize + 15,
+                "",
+                {
+                    fontSize: "18px",
+                    color: TEXT_COLOR,
+                    fontStyle: "bold",
+                    fontFamily: "PixelFont",
+                },
+            )
+            .setOrigin(0.5);
+
+        const archHitArea = new Phaser.Geom.Rectangle(
+            archButtonX,
+            archButtonY,
+            archButtonSize,
+            archButtonSize,
+        );
+        this.architectButton
+            .setInteractive({
+                hitArea: archHitArea,
+                hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+                useHandCursor: true,
+            })
+            .on("pointerdown", () => GameManager.activateInvulnerability())
+            .on("pointerover", () => {
+                if (GameManager.invulnerableCooldownTimer <= 0) {
+                    this.architectButton.fillStyle(0x10b981);
+                }
+            })
+            .on("pointerout", () => {
+                this.architectButton.fillStyle(BG_COLOR);
+            });
+
+        this.architectButton.setVisible(false);
+        this.architectText.setVisible(false);
+        this.architectCooldownText.setVisible(false);
     }
 
     update() {
@@ -233,10 +413,12 @@ export default class UIScene extends Phaser.Scene {
             this.megaBombCooldownText.setVisible(true);
 
             if (GameManager.megaBombTimer > 0) {
-                this.megaBombCooldownText.setText(`${Math.ceil(GameManager.megaBombTimer / 1000)}s`);
+                this.megaBombCooldownText.setText(
+                    `${Math.ceil(GameManager.megaBombTimer / 1000)}s`,
+                );
                 this.megaBombButton.setAlpha(0.5);
             } else {
-                this.megaBombCooldownText.setText('');
+                this.megaBombCooldownText.setText("");
                 this.megaBombButton.setAlpha(1);
             }
         }
@@ -247,10 +429,12 @@ export default class UIScene extends Phaser.Scene {
             this.timeWarpCooldownText.setVisible(true);
 
             if (GameManager.timeWarpTimer > 0) {
-                this.timeWarpCooldownText.setText(`${Math.ceil(GameManager.timeWarpTimer / 1000)}s`);
+                this.timeWarpCooldownText.setText(
+                    `${Math.ceil(GameManager.timeWarpTimer / 1000)}s`,
+                );
                 this.timeWarpButton.setAlpha(0.5);
             } else {
-                this.timeWarpCooldownText.setText('');
+                this.timeWarpCooldownText.setText("");
                 this.timeWarpButton.setAlpha(1);
             }
         }
@@ -265,8 +449,8 @@ export default class UIScene extends Phaser.Scene {
         this.tweens.add({
             targets: this.energyBar,
             scaleX: percentage,
-            ease: 'Linear',
-            duration: 200
+            ease: "Linear",
+            duration: 200,
         });
     }
 
@@ -275,8 +459,8 @@ export default class UIScene extends Phaser.Scene {
         this.tweens.add({
             targets: this.healthBar,
             scaleX: percentage,
-            ease: 'Linear',
-            duration: 200
+            ease: "Linear",
+            duration: 200,
         });
     }
 
@@ -295,12 +479,14 @@ export default class UIScene extends Phaser.Scene {
         gameOverBg.fillStyle(0x000000, 0.7);
         gameOverBg.fillRect(0, 0, gameWidth, height);
 
-        this.add.text(gameWidth / 2, height / 2, 'Game Over', {
-            fontSize: '64px',
-            color: '#ff0000',
-            fontStyle: 'bold',
-            fontFamily: 'PixelFont',
-        }).setOrigin(0.5);
+        this.add
+            .text(gameWidth / 2, height / 2, "Game Over", {
+                fontSize: "64px",
+                color: "#ff0000",
+                fontStyle: "bold",
+                fontFamily: "PixelFont",
+            })
+            .setOrigin(0.5);
     }
 
     public showInfoText(message: string) {
@@ -308,24 +494,26 @@ export default class UIScene extends Phaser.Scene {
             this.infoText.destroy();
         }
         const gameWidth = 800;
-        this.infoText = this.add.text(gameWidth / 2, 150, message, {
-            fontSize: '24px',
-            color: '#FBBF24',
-            fontStyle: 'bold',
-            align: 'center',
-            fontFamily: 'PixelFont',
-        }).setOrigin(0.5);
+        this.infoText = this.add
+            .text(gameWidth / 2, 150, message, {
+                fontSize: "24px",
+                color: "#FBBF24",
+                fontStyle: "bold",
+                align: "center",
+                fontFamily: "PixelFont",
+            })
+            .setOrigin(0.5);
 
         this.tweens.add({
             targets: this.infoText,
             alpha: 0,
             duration: 2000,
-            ease: 'Power2',
+            ease: "Power2",
             onComplete: () => {
                 if (this.infoText) {
                     this.infoText.destroy();
                 }
-            }
+            },
         });
     }
 
@@ -334,30 +522,36 @@ export default class UIScene extends Phaser.Scene {
         const shopX = 1200 - shopWidth;
         const { height } = this.cameras.main;
 
-        this.add.graphics()
+        this.add
+            .graphics()
             .fillStyle(SHOP_BG_COLOR, 1)
             .fillRect(shopX, 0, shopWidth, height)
             .lineStyle(2, SHOP_BORDER_COLOR)
             .strokeRect(shopX, 0, shopWidth, height);
 
-        this.add.text(shopX + shopWidth / 2, 40, 'Upgrades', {
-            fontSize: '28px',
-            color: SHOP_TEXT_COLOR,
-            fontStyle: 'bold',
-            fontFamily: 'PixelFont',
-        }).setOrigin(0.5);
+        this.add
+            .text(shopX + shopWidth / 2, 40, "Upgrades", {
+                fontSize: "28px",
+                color: SHOP_TEXT_COLOR,
+                fontStyle: "bold",
+                fontFamily: "PixelFont",
+            })
+            .setOrigin(0.5);
 
-        this.shopLightText = this.add.text(shopX + shopWidth / 2, 80, '', {
-            fontSize: '22px',
-            color: SHOP_ACCENT_COLOR,
-            fontFamily: 'PixelFont',
-        }).setOrigin(0.5);
+        this.shopLightText = this.add
+            .text(shopX + shopWidth / 2, 80, "", {
+                fontSize: "22px",
+                color: SHOP_ACCENT_COLOR,
+                fontFamily: "PixelFont",
+            })
+            .setOrigin(0.5);
         this.updateLightText();
 
         const categories = Object.keys(upgrades) as UpgradeCategory[];
         const tabWidth = (shopWidth - 40) / categories.length;
 
-        this.add.graphics()
+        this.add
+            .graphics()
             .fillStyle(SHOP_TAB_BG_COLOR)
             .fillRect(shopX + 20, 120, shopWidth - 40, 50);
 
@@ -365,11 +559,12 @@ export default class UIScene extends Phaser.Scene {
 
         categories.forEach((category, index) => {
             const tabX = shopX + 20 + index * tabWidth + tabWidth / 2;
-            const tab = this.add.image(tabX, 145, category)
+            const tab = this.add
+                .image(tabX, 145, category)
                 .setScale(0.04)
                 .setInteractive({ useHandCursor: true });
 
-            tab.on('pointerdown', () => {
+            tab.on("pointerdown", () => {
                 this.showUpgrades(category);
             });
 
@@ -384,12 +579,24 @@ export default class UIScene extends Phaser.Scene {
         const mask = maskGraphics.createGeometryMask();
         this.upgradesContainer.setMask(mask);
 
-        this.input.on('wheel', (pointer: Phaser.Input.Pointer, gameObjects: Phaser.GameObjects.GameObject[], deltaX: number, deltaY: number) => {
-            if (pointer.x > shopX && this.scrollMinY !== this.scrollMaxY) {
-                this.upgradesContainer.y -= deltaY * 0.5;
-                this.upgradesContainer.y = Phaser.Math.Clamp(this.upgradesContainer.y, this.scrollMinY, this.scrollMaxY);
-            }
-        });
+        this.input.on(
+            "wheel",
+            (
+                pointer: Phaser.Input.Pointer,
+                gameObjects: Phaser.GameObjects.GameObject[],
+                deltaX: number,
+                deltaY: number,
+            ) => {
+                if (pointer.x > shopX && this.scrollMinY !== this.scrollMaxY) {
+                    this.upgradesContainer.y -= deltaY * 0.5;
+                    this.upgradesContainer.y = Phaser.Math.Clamp(
+                        this.upgradesContainer.y,
+                        this.scrollMinY,
+                        this.scrollMaxY,
+                    );
+                }
+            },
+        );
 
         this.showUpgrades(this.currentCategory);
     }
@@ -407,7 +614,8 @@ export default class UIScene extends Phaser.Scene {
         const tabWidth = (shopWidth - 40) / categories.length;
         const activeIndex = categories.indexOf(category);
 
-        this.tabIndicator.clear()
+        this.tabIndicator
+            .clear()
             .fillStyle(ACCENT_COLOR)
             .fillRect(shopX + 20 + activeIndex * tabWidth, 165, tabWidth, 5);
 
@@ -427,55 +635,97 @@ export default class UIScene extends Phaser.Scene {
         categoryUpgrades.forEach((upgrade, index) => {
             const y = index * 110;
 
-            const currentCost = upgrade.id === 'sale' ? upgrade.cost : Math.ceil(upgrade.cost * GameManager.saleModifier);
+            const currentCost =
+                upgrade.id === "sale"
+                    ? upgrade.cost
+                    : Math.ceil(upgrade.cost * GameManager.saleModifier);
             const canAfford = light >= currentCost && currentCost != 0;
 
             const nameText = this.add.text(0, y, upgrade.name, {
-                fontSize: '14px',
+                fontSize: "14px",
                 color: SHOP_TEXT_COLOR,
-                fontStyle: 'bold',
-                fontFamily: 'PixelFont',
+                fontStyle: "bold",
+                fontFamily: "PixelFont",
             });
 
             const descText = this.add.text(0, y + 28, upgrade.description, {
-                fontSize: '10px',
+                fontSize: "10px",
                 color: SHOP_TEXT_COLOR_MEDIUM,
                 wordWrap: { width: shopWidth - 160 },
-                fontFamily: 'PixelFont',
+                fontFamily: "PixelFont",
             });
 
-            const costText = this.add.text(shopWidth - 40, y + 10, `Cost: ${Math.ceil(currentCost)}`, {
-                fontSize: '16px',
-                color: canAfford ? SHOP_ACCENT_COLOR : SHOP_TEXT_COLOR_DARK,
-                fontStyle: 'bold',
-                fontFamily: 'PixelFont',
-            }).setOrigin(1, 0);
+            const costText = this.add
+                .text(
+                    shopWidth - 40,
+                    y + 10,
+                    `Cost: ${Math.ceil(currentCost)}`,
+                    {
+                        fontSize: "16px",
+                        color: canAfford
+                            ? SHOP_ACCENT_COLOR
+                            : SHOP_TEXT_COLOR_DARK,
+                        fontStyle: "bold",
+                        fontFamily: "PixelFont",
+                    },
+                )
+                .setOrigin(1, 0);
 
             const buyButton = this.add.graphics();
-            const buttonRect = new Phaser.Geom.Rectangle(shopWidth - 140, y + 55, 100, 35);
+            const buttonRect = new Phaser.Geom.Rectangle(
+                shopWidth - 140,
+                y + 55,
+                100,
+                35,
+            );
 
             const drawButton = (color: number) => {
-                buyButton.clear().fillStyle(color).fillRoundedRect(buttonRect.x, buttonRect.y, buttonRect.width, buttonRect.height, 10);
+                buyButton
+                    .clear()
+                    .fillStyle(color)
+                    .fillRoundedRect(
+                        buttonRect.x,
+                        buttonRect.y,
+                        buttonRect.width,
+                        buttonRect.height,
+                        10,
+                    );
             };
 
-            drawButton(canAfford ? SHOP_BUY_BUTTON_COLOR : SHOP_DISABLED_BUTTON_COLOR);
+            drawButton(
+                canAfford ? SHOP_BUY_BUTTON_COLOR : SHOP_DISABLED_BUTTON_COLOR,
+            );
 
-            const buyButtonText = this.add.text(shopWidth - 90, y + 72, 'BUY', {
-                fontSize: '18px',
-                color: canAfford ? SHOP_TEXT_COLOR : SHOP_TEXT_COLOR_DARK,
-                fontStyle: 'bold',
-                fontFamily: 'PixelFont',
-            }).setOrigin(0.5);
-
+            const buyButtonText = this.add
+                .text(shopWidth - 90, y + 72, "BUY", {
+                    fontSize: "18px",
+                    color: canAfford ? SHOP_TEXT_COLOR : SHOP_TEXT_COLOR_DARK,
+                    fontStyle: "bold",
+                    fontFamily: "PixelFont",
+                })
+                .setOrigin(0.5);
 
             if (canAfford) {
-                buyButton.setInteractive({ hitArea: buttonRect, hitAreaCallback: Phaser.Geom.Rectangle.Contains, useHandCursor: true })
-                    .on('pointerdown', () => this.purchaseUpgrade(upgrade))
-                    .on('pointerover', () => drawButton(SHOP_BUY_BUTTON_COLOR_HOVER))
-                    .on('pointerout', () => drawButton(SHOP_BUY_BUTTON_COLOR));
+                buyButton
+                    .setInteractive({
+                        hitArea: buttonRect,
+                        hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+                        useHandCursor: true,
+                    })
+                    .on("pointerdown", () => this.purchaseUpgrade(upgrade))
+                    .on("pointerover", () =>
+                        drawButton(SHOP_BUY_BUTTON_COLOR_HOVER),
+                    )
+                    .on("pointerout", () => drawButton(SHOP_BUY_BUTTON_COLOR));
             }
 
-            this.upgradesContainer.add([nameText, descText, costText, buyButton, buyButtonText]);
+            this.upgradesContainer.add([
+                nameText,
+                descText,
+                costText,
+                buyButton,
+                buyButtonText,
+            ]);
         });
 
         const totalHeight = categoryUpgrades.length * 110;
@@ -492,7 +742,10 @@ export default class UIScene extends Phaser.Scene {
 
     private purchaseUpgrade(upgrade: Upgrade) {
         const light = GameManager.getLight();
-        const currentCost = upgrade.id === 'sale' ? upgrade.cost : Math.ceil(upgrade.cost * GameManager.saleModifier);
+        const currentCost =
+            upgrade.id === "sale"
+                ? upgrade.cost
+                : Math.ceil(upgrade.cost * GameManager.saleModifier);
 
         if (light >= currentCost) {
             GameManager.setLight(light - currentCost);
@@ -516,21 +769,21 @@ export default class UIScene extends Phaser.Scene {
     }
 
     private addHoverEffect(image: Phaser.GameObjects.Image) {
-        image.on('pointerover', () => {
+        image.on("pointerover", () => {
             this.tweens.add({
                 targets: image,
                 scale: 0.06,
                 duration: 100,
-                ease: 'Linear'
+                ease: "Linear",
             });
         });
 
-        image.on('pointerout', () => {
+        image.on("pointerout", () => {
             this.tweens.add({
                 targets: image,
                 scale: 0.05,
                 duration: 100,
-                ease: 'Linear'
+                ease: "Linear",
             });
         });
     }

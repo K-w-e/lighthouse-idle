@@ -23,17 +23,20 @@ In Lighthouse Idle, you are the keeper of a lone lighthouse. Your mission is to 
 To run the project on your local machine, follow these steps:
 
 1.  **Clone the repository:**
+
     ```bash
     git clone <repository-url>
     cd lighthouse-idle
     ```
 
 2.  **Install dependencies:**
+
     ```bash
     npm install
     ```
 
 3.  **Run the development server:**
+
     ```bash
     npm run dev
     ```
@@ -42,6 +45,6 @@ To run the project on your local machine, follow these steps:
 
 ## Technology Stack
 
--   **Game Engine:** [Phaser 3](https://phaser.io/)
--   **Language:** [TypeScript](https://www.typescriptlang.org/)
--   **Build Tool:** [Vite](https://vitejs.dev/)
+- **Game Engine:** [Phaser 3](https://phaser.io/)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Build Tool:** [Vite](https://vitejs.dev/)

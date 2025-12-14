@@ -1,14 +1,20 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
 
 export class FloatingText extends Phaser.GameObjects.Text {
-    constructor(scene: Phaser.Scene, x: number, y: number, text: string, color: string = '#ffffff') {
+    constructor(
+        scene: Phaser.Scene,
+        x: number,
+        y: number,
+        text: string,
+        color: string = "#ffffff",
+    ) {
         super(scene, x, y, text, {
-            fontSize: '20px',
+            fontSize: "20px",
             color: color,
-            fontStyle: 'bold',
-            stroke: '#000000',
+            fontStyle: "bold",
+            stroke: "#000000",
             strokeThickness: 4,
-            fontFamily: 'PixelFont',
+            fontFamily: "PixelFont",
         });
         scene.add.existing(this);
         this.setOrigin(0.5);
@@ -18,10 +24,10 @@ export class FloatingText extends Phaser.GameObjects.Text {
             y: y - 50,
             alpha: 0,
             duration: 1000,
-            ease: 'Power2',
+            ease: "Power2",
             onComplete: () => {
                 this.destroy();
-            }
+            },
         });
     }
 }
