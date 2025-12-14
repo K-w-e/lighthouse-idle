@@ -1,10 +1,10 @@
-import Phaser from "phaser";
-import GameScene from "./scenes/GameScene";
-import UIScene from "./scenes/UIScene";
-import { getUpgradeById } from "./data/upgrades";
-import { Wave } from "./object/Wave";
-import PrestigeManager from "./managers/PrestigeManager";
-import { ArchetypeID } from "./data/archetypes";
+import Phaser from 'phaser';
+import GameScene from './scenes/GameScene';
+import UIScene from './scenes/UIScene';
+import { getUpgradeById } from './data/upgrades';
+import { Wave } from './object/Wave';
+import PrestigeManager from './managers/PrestigeManager';
+import { ArchetypeID } from './data/archetypes';
 
 class GameManager {
     private static instance: GameManager;
@@ -80,7 +80,7 @@ class GameManager {
     public waveTime: number = 30; // seconds
     public waveTimer: number = this.waveTime;
     public waveReward: number = 100;
-    public waveState: "in_wave" | "waiting" = "in_wave";
+    public waveState: 'in_wave' | 'waiting' = 'in_wave';
     public waveDelay: number = 10; // seconds
 
     public enemySpeedModifier: number = 1;
@@ -102,14 +102,8 @@ class GameManager {
 
         this.currentEnergy = this.maxEnergy;
         this.uiScene.updateEnergy(this.currentEnergy, this.maxEnergy);
-        this.uiScene.updateLighthouseHealth(
-            this.lighthouseHealth,
-            this.maxLighthouseHealth,
-        );
-        this.uiScene.updateLighthouseHealth(
-            this.lighthouseHealth,
-            this.maxLighthouseHealth,
-        );
+        this.uiScene.updateLighthouseHealth(this.lighthouseHealth, this.maxLighthouseHealth);
+        this.uiScene.updateLighthouseHealth(this.lighthouseHealth, this.maxLighthouseHealth);
         this.uiScene.setLight(this.light);
 
         this.applyPrestigeModifiers();
@@ -163,13 +157,13 @@ class GameManager {
             this.invulnerableCooldownTimer -= delta;
         }
 
-        if (this.waveState === "in_wave") {
+        if (this.waveState === 'in_wave') {
             this.waveTimer -= delta / 1000;
             if (this.waveTimer <= 0) {
                 this.endWave();
             }
             this.uiScene.updateWaveTimer(this.waveTimer, this.waveTime);
-        } else if (this.waveState === "waiting") {
+        } else if (this.waveState === 'waiting') {
             this.waveTimer -= delta / 1000;
             if (this.waveTimer <= 0) {
                 this.startWave();
@@ -179,17 +173,13 @@ class GameManager {
 
         this.lighthouseHealth = Math.min(
             this.maxLighthouseHealth,
-            this.lighthouseHealth +
-                this.lighthouseHealthRegen * (delta / 1000) * this.timeScale,
+            this.lighthouseHealth + this.lighthouseHealthRegen * (delta / 1000) * this.timeScale,
         );
-        this.uiScene.updateLighthouseHealth(
-            this.lighthouseHealth,
-            this.maxLighthouseHealth,
-        );
+        this.uiScene.updateLighthouseHealth(this.lighthouseHealth, this.maxLighthouseHealth);
     }
 
     private endWave() {
-        this.waveState = "waiting";
+        this.waveState = 'waiting';
         this.waveNumber++;
         this.waveTimer = this.waveDelay;
         this.addLight(this.waveReward * this.waveNumber);
@@ -197,13 +187,10 @@ class GameManager {
     }
 
     private startWave() {
-        this.waveState = "in_wave";
+        this.waveState = 'in_wave';
         this.waveNumber++;
         this.waveTimer = this.waveTime;
-        this.gameScene.waveSpawnDelay = Math.max(
-            100,
-            this.gameScene.waveSpawnDelay - 100,
-        );
+        this.gameScene.waveSpawnDelay = Math.max(100, this.gameScene.waveSpawnDelay - 100);
     }
 
     public applyUpgrade(type: string) {
@@ -216,128 +203,116 @@ class GameManager {
 
         switch (type) {
             // Offensive
-            case "beam_pierce":
+            case 'beam_pierce':
                 this.beamPenetration += value;
                 break;
-            case "beam_length":
+            case 'beam_length':
                 this.lightRadius += value;
                 break;
-            case "rotation_speed":
+            case 'rotation_speed':
                 this.rotationSpeed += value;
                 break;
-            case "slowing_pulse":
+            case 'slowing_pulse':
                 this.hasSlowingPulse = true;
                 this.slowingPulseSlowFactor += value;
                 break;
-            case "dual_lens":
+            case 'dual_lens':
                 this.lightBeamCount = Math.max(this.lightBeamCount, 2);
                 break;
-            case "light_amplitude":
+            case 'light_amplitude':
                 this.lightAngle += value;
                 break;
-            case "multi_lens":
+            case 'multi_lens':
                 this.lightBeamCount += value;
                 break;
-            case "chain_lightning":
+            case 'chain_lightning':
                 this.chainLightningChance += value;
                 break;
-            case "mega_bomb":
+            case 'mega_bomb':
                 this.hasMegaBomb = true;
                 break;
 
             // Defensive
-            case "shield_core":
+            case 'shield_core':
                 this.maxLighthouseHealth += value;
-                this.uiScene.updateLighthouseHealth(
-                    this.lighthouseHealth,
-                    this.maxLighthouseHealth,
-                );
+                this.uiScene.updateLighthouseHealth(this.lighthouseHealth, this.maxLighthouseHealth);
                 break;
-            case "shield_capacitor":
+            case 'shield_capacitor':
                 this.lighthouseHealthRegen += value;
                 break;
-            case "auto_builder":
+            case 'auto_builder':
                 this.hasAutoBuilder = true;
                 break;
-            case "island_reconstruction":
+            case 'island_reconstruction':
                 this.gameScene.rebuildIsland();
                 break;
-            case "island_expansion":
+            case 'island_expansion':
                 this.gameScene.expandIsland();
                 break;
-            case "island_fortification":
+            case 'island_fortification':
                 this.tileHealth += value;
                 break;
 
             // Economic
-            case "core_crystal":
+            case 'core_crystal':
                 this.lightPerSecond += value;
                 break;
-            case "wave_fragments":
+            case 'wave_fragments':
                 this.waveFragmentsModifier += value;
                 break;
-            case "kinetic_siphon":
+            case 'kinetic_siphon':
                 this.kineticSiphonModifier += value;
                 break;
-            case "tidal_force":
+            case 'tidal_force':
                 this.tidalForceModifier += value;
                 break;
-            case "multiplier":
+            case 'multiplier':
                 this.lightMultiplier *= value;
                 break;
-            case "auto_light_collector":
+            case 'auto_light_collector':
                 this.autoLightCollectorRate += value;
                 break;
-            case "light_interest":
+            case 'light_interest':
                 this.lightInterestRate += value;
                 break;
-            case "sale":
+            case 'sale':
                 this.saleModifier -= value;
                 break;
-            case "time_warp":
+            case 'time_warp':
                 this.hasTimeWarp = true;
                 break;
 
             // Energy
-            case "energy_capacity":
+            case 'energy_capacity':
                 this.maxEnergy += value;
                 this.uiScene.updateEnergy(this.currentEnergy, this.maxEnergy);
                 break;
-            case "energy_efficiency":
-                this.energyDrainRate = Math.max(
-                    0.01,
-                    this.energyDrainRate - value,
-                );
+            case 'energy_efficiency':
+                this.energyDrainRate = Math.max(0.01, this.energyDrainRate - value);
                 break;
-            case "click_power":
+            case 'click_power':
                 this.energyPerClick += value;
                 break;
-            case "auto_energy_collector":
+            case 'auto_energy_collector':
                 this.autoEnergyCollectorRate += value;
                 break;
-            case "overcharge":
+            case 'overcharge':
                 this.overchargeChance += value;
                 break;
-            case "energy_on_kill":
+            case 'energy_on_kill':
                 this.energyOnKill += value;
                 break;
         }
     }
 
     public getWaveLightReward(wave: Wave): number {
-        return Math.floor(
-            wave.waveWidth / 10 +
-                this.waveFragmentsModifier * this.lightMultiplier,
-        );
+        return Math.floor(wave.waveWidth / 10 + this.waveFragmentsModifier * this.lightMultiplier);
     }
 
     public onWaveDestroyed(wave: Wave) {
         let lightToAdd = this.getWaveLightReward(wave);
         this.addLight(lightToAdd);
-        this.currentEnergy = Math.min(
-            this.maxEnergy,
-            this.currentEnergy + this.energyOnKill,
-        );
+        this.currentEnergy = Math.min(this.maxEnergy, this.currentEnergy + this.energyOnKill);
         this.uiScene.updateEnergy(this.currentEnergy, this.maxEnergy);
     }
 
@@ -346,10 +321,7 @@ class GameManager {
             return; // No damage if invulnerable
         }
         this.lighthouseHealth -= 10;
-        this.uiScene.updateLighthouseHealth(
-            this.lighthouseHealth,
-            this.maxLighthouseHealth,
-        );
+        this.uiScene.updateLighthouseHealth(this.lighthouseHealth, this.maxLighthouseHealth);
         if (this.lighthouseHealth <= 0) {
             this.gameOver();
         }
@@ -381,11 +353,7 @@ class GameManager {
         }
 
         if (this.megaBombTimer > 0) {
-            this.uiScene.showInfoText(
-                `Mega Bomb on cooldown for ${Math.ceil(
-                    this.megaBombTimer / 1000,
-                )}s`,
-            );
+            this.uiScene.showInfoText(`Mega Bomb on cooldown for ${Math.ceil(this.megaBombTimer / 1000)}s`);
             return;
         }
 
@@ -399,11 +367,7 @@ class GameManager {
         }
 
         if (this.timeWarpTimer > 0) {
-            this.uiScene.showInfoText(
-                `Time Warp on cooldown for ${Math.ceil(
-                    this.timeWarpTimer / 1000,
-                )}s`,
-            );
+            this.uiScene.showInfoText(`Time Warp on cooldown for ${Math.ceil(this.timeWarpTimer / 1000)}s`);
             return;
         }
 
@@ -411,15 +375,13 @@ class GameManager {
         this.isTimeWarpActive = true;
         this.timeWarpDurationTimer = this.timeWarpDuration;
         this.timeScale = 2 * this.baseTimeScale;
-        this.uiScene.showInfoText("TIME WARP ACTIVATED!");
+        this.uiScene.showInfoText('TIME WARP ACTIVATED!');
     }
 
     public activateInvulnerability() {
         if (this.invulnerableCooldownTimer > 0) {
             this.uiScene.showInfoText(
-                `Fortified Construct on cooldown for ${Math.ceil(
-                    this.invulnerableCooldownTimer / 1000,
-                )}s`,
+                `Fortified Construct on cooldown for ${Math.ceil(this.invulnerableCooldownTimer / 1000)}s`,
             );
             return;
         }
@@ -427,22 +389,13 @@ class GameManager {
         this.isInvulnerable = true;
         this.invulnerableTimer = this.invulnerableDuration;
         this.invulnerableCooldownTimer = this.invulnerableCooldown;
-        this.uiScene.showInfoText("FORTIFIED CONSTRUCT ACTIVE!");
+        this.uiScene.showInfoText('FORTIFIED CONSTRUCT ACTIVE!');
     }
 
     public handleLighthouseClick() {
-        this.currentEnergy = Math.min(
-            this.currentEnergy + this.energyPerClick,
-            this.maxEnergy,
-        );
-        if (
-            this.overchargeChance > 0 &&
-            Math.random() < this.overchargeChance
-        ) {
-            this.currentEnergy = Math.min(
-                this.currentEnergy + this.maxEnergy * 0.1,
-                this.maxEnergy,
-            );
+        this.currentEnergy = Math.min(this.currentEnergy + this.energyPerClick, this.maxEnergy);
+        if (this.overchargeChance > 0 && Math.random() < this.overchargeChance) {
+            this.currentEnergy = Math.min(this.currentEnergy + this.maxEnergy * 0.1, this.maxEnergy);
         }
         this.uiScene.updateEnergy(this.currentEnergy, this.maxEnergy);
     }
@@ -452,38 +405,35 @@ class GameManager {
         const relics = PrestigeManager.unlockedRelics;
 
         if (archetype === ArchetypeID.CHRONOMANCER) {
-            console.log("Archetype: Chronomancer Active");
+            console.log('Archetype: Chronomancer Active');
             this.hasTimeWarp = true;
             this.baseTimeScale = 1.2;
             this.megaBombCooldown *= 0.8;
             this.timeWarpCooldown *= 0.8;
             this.slowingPulseCooldown *= 0.8;
         } else if (archetype === ArchetypeID.STORMBRINGER) {
-            console.log("Archetype: Stormbringer Active");
+            console.log('Archetype: Stormbringer Active');
             this.hasMegaBomb = true;
             this.chainLightningChance += 0.2;
         } else if (archetype === ArchetypeID.ARCHITECT) {
-            console.log("Archetype: Architect Active");
+            console.log('Archetype: Architect Active');
             this.hasAutoBuilder = true;
             this.hasSlowingPulse = true;
             this.slowingPulseDuration = 5000;
             this.autoBuilderTimer = 0;
         }
 
-        if (relics.includes("prism_of_greed")) {
+        if (relics.includes('prism_of_greed')) {
             this.lightMultiplier *= 3;
             this.enemySpeedModifier = 1.5;
         }
-        if (relics.includes("solar_sail")) {
+        if (relics.includes('solar_sail')) {
             this.energyDrainRate *= 0.5;
             this.maxLighthouseHealth = 1;
             this.lighthouseHealth = 1;
-            this.uiScene.updateLighthouseHealth(
-                this.lighthouseHealth,
-                this.maxLighthouseHealth,
-            );
+            this.uiScene.updateLighthouseHealth(this.lighthouseHealth, this.maxLighthouseHealth);
         }
-        if (relics.includes("void_anchor")) {
+        if (relics.includes('void_anchor')) {
             this.rotationLocked = true;
             this.lightAngle = 360;
         }

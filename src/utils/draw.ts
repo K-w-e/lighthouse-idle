@@ -1,5 +1,5 @@
-import Phaser from "phaser";
-import GameManager from "../GameManager";
+import Phaser from 'phaser';
+import GameManager from '../GameManager';
 
 export const spessoreAnello = 15;
 export const coloreScuro = 0x8b4513;
@@ -26,31 +26,16 @@ export function createLand(
     const landCenterY = lighthouse.y;
     const tileSize = 10;
 
-    const landRT = scene.add
-        .renderTexture(lighthouse.x, lighthouse.y, 800, 900)
-        .setDepth(-1);
+    const landRT = scene.add.renderTexture(lighthouse.x, lighthouse.y, 800, 900).setDepth(-1);
     const landGraphics = scene.make.graphics();
     landGraphics.clear();
 
-    for (
-        let y = landCenterY - landRadius;
-        y < landCenterY + landRadius;
-        y += tileSize
-    ) {
-        for (
-            let x = landCenterX - landRadius;
-            x < landCenterX + landRadius;
-            x += tileSize
-        ) {
+    for (let y = landCenterY - landRadius; y < landCenterY + landRadius; y += tileSize) {
+        for (let x = landCenterX - landRadius; x < landCenterX + landRadius; x += tileSize) {
             const blockCenterX = x + tileSize / 2;
             const blockCenterY = y + tileSize / 2;
 
-            const distance = Phaser.Math.Distance.Between(
-                landCenterX,
-                landCenterY,
-                blockCenterX,
-                blockCenterY,
-            );
+            const distance = Phaser.Math.Distance.Between(landCenterX, landCenterY, blockCenterX, blockCenterY);
             const jitteredRadius = landRadius + Phaser.Math.FloatBetween(-7, 7);
 
             if (distance < jitteredRadius) {
@@ -65,32 +50,12 @@ export function createLand(
     landGraphics.destroy();
     const landTiles = scene.physics.add.staticGroup();
 
-    for (
-        let y = landCenterY - landRadius;
-        y < landCenterY + landRadius;
-        y += tileSize
-    ) {
-        for (
-            let x = landCenterX - landRadius;
-            x < landCenterX + landRadius;
-            x += tileSize
-        ) {
-            const distance = Phaser.Math.Distance.Between(
-                landCenterX,
-                landCenterY,
-                x + tileSize / 2,
-                y + tileSize / 2,
-            );
+    for (let y = landCenterY - landRadius; y < landCenterY + landRadius; y += tileSize) {
+        for (let x = landCenterX - landRadius; x < landCenterX + landRadius; x += tileSize) {
+            const distance = Phaser.Math.Distance.Between(landCenterX, landCenterY, x + tileSize / 2, y + tileSize / 2);
             if (distance < landRadius) {
-                const tile = scene.add.rectangle(
-                    x + tileSize / 2,
-                    y + tileSize / 2,
-                    tileSize,
-                    tileSize,
-                    0x00ff00,
-                    0,
-                );
-                tile.setData("health", GameManager.tileHealth);
+                const tile = scene.add.rectangle(x + tileSize / 2, y + tileSize / 2, tileSize, tileSize, 0x00ff00, 0);
+                tile.setData('health', GameManager.tileHealth);
                 landTiles.add(tile);
             }
         }
@@ -106,10 +71,7 @@ export function createVision(scene: Phaser.Scene): {
 } {
     const visionCone = scene.add.graphics();
     const { width, height } = scene.scale;
-    const waveness = scene.add
-        .graphics()
-        .fillStyle(0x000000, 0.5)
-        .fillRect(0, 0, width, height);
+    const waveness = scene.add.graphics().fillStyle(0x000000, 0.5).fillRect(0, 0, width, height);
     const visionMask = visionCone.createGeometryMask();
     waveness.setMask(visionMask);
     waveness.mask.invertAlpha = true;

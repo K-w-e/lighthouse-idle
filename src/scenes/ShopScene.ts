@@ -1,6 +1,6 @@
-import Phaser from "phaser";
-import { upgrades } from "../data/upgrades";
-import GameManager from "../GameManager";
+import Phaser from 'phaser';
+import { upgrades } from '../data/upgrades';
+import GameManager from '../GameManager';
 
 type UpgradeCategory = keyof typeof upgrades;
 type Upgrade = (typeof upgrades)[UpgradeCategory][0];
@@ -8,17 +8,17 @@ type Upgrade = (typeof upgrades)[UpgradeCategory][0];
 const BORDER_COLOR = 0x5b6d84;
 const BG_COLOR = 0x1a2130;
 const TAB_BG_COLOR = 0x2a3140;
-const TEXT_COLOR = "#FFFFFF";
-const TEXT_COLOR_MEDIUM = "#D1D5DB";
-const TEXT_COLOR_DARK = "#6B7280";
-const ACCENT_COLOR = "#FBBF24";
+const TEXT_COLOR = '#FFFFFF';
+const TEXT_COLOR_MEDIUM = '#D1D5DB';
+const TEXT_COLOR_DARK = '#6B7280';
+const ACCENT_COLOR = '#FBBF24';
 const BUY_BUTTON_COLOR = 0x10b981;
 const BUY_BUTTON_COLOR_HOVER = 0x34d399;
 const DISABLED_BUTTON_COLOR = 0x4b5563;
 
 export class ShopScene extends Phaser.Scene {
     private upgradesContainer!: Phaser.GameObjects.Container;
-    private currentCategory: UpgradeCategory = "offensive";
+    private currentCategory: UpgradeCategory = 'offensive';
     private lightText!: Phaser.GameObjects.Text;
     private tabs: { [key in UpgradeCategory]?: Phaser.GameObjects.Text } = {};
     private tabIndicator!: Phaser.GameObjects.Graphics;
@@ -26,7 +26,7 @@ export class ShopScene extends Phaser.Scene {
     private scrollMaxY = 0;
 
     constructor() {
-        super("ShopScene");
+        super('ShopScene');
     }
 
     create() {
@@ -40,35 +40,35 @@ export class ShopScene extends Phaser.Scene {
             .strokeRect(0, 0, width, height);
 
         this.add
-            .text(width / 2, 40, "Lighthouse Upgrades", {
-                fontSize: "32px",
+            .text(width / 2, 40, 'Lighthouse Upgrades', {
+                fontSize: '32px',
                 color: TEXT_COLOR,
-                fontStyle: "bold",
-                fontFamily: "PixelFont",
+                fontStyle: 'bold',
+                fontFamily: 'PixelFont',
             })
             .setOrigin(0.5);
 
         const closeButton = this.add
-            .text(width - 30, 30, "X", {
-                fontSize: "28px",
+            .text(width - 30, 30, 'X', {
+                fontSize: '28px',
                 color: TEXT_COLOR,
-                fontFamily: "PixelFont",
+                fontFamily: 'PixelFont',
             })
             .setOrigin(0.5)
             .setInteractive({ useHandCursor: true });
 
-        closeButton.on("pointerdown", () => {
+        closeButton.on('pointerdown', () => {
             this.scene.stop();
-            this.scene.resume("GameScene");
+            this.scene.resume('GameScene');
         });
-        closeButton.on("pointerover", () => closeButton.setColor(ACCENT_COLOR));
-        closeButton.on("pointerout", () => closeButton.setColor(TEXT_COLOR));
+        closeButton.on('pointerover', () => closeButton.setColor(ACCENT_COLOR));
+        closeButton.on('pointerout', () => closeButton.setColor(TEXT_COLOR));
 
         this.lightText = this.add
-            .text(width / 2, 80, "", {
-                fontSize: "24px",
+            .text(width / 2, 80, '', {
+                fontSize: '24px',
                 color: ACCENT_COLOR,
-                fontFamily: "PixelFont",
+                fontFamily: 'PixelFont',
             })
             .setOrigin(0.5);
         this.updateLightDisplay();
@@ -87,23 +87,23 @@ export class ShopScene extends Phaser.Scene {
             const tabX = 50 + index * tabWidth + tabWidth / 2;
             const tab = this.add
                 .text(tabX, 145, category.toUpperCase(), {
-                    fontSize: "20px",
+                    fontSize: '20px',
                     color: TEXT_COLOR_MEDIUM,
-                    fontStyle: "bold",
-                    fontFamily: "PixelFont",
+                    fontStyle: 'bold',
+                    fontFamily: 'PixelFont',
                 })
                 .setOrigin(0.5)
                 .setInteractive({ useHandCursor: true });
 
-            tab.on("pointerdown", () => {
+            tab.on('pointerdown', () => {
                 this.showUpgrades(category);
             });
-            tab.on("pointerover", () => {
+            tab.on('pointerover', () => {
                 if (this.currentCategory !== category) {
                     tab.setColor(TEXT_COLOR);
                 }
             });
-            tab.on("pointerout", () => {
+            tab.on('pointerout', () => {
                 if (this.currentCategory !== category) {
                     tab.setColor(TEXT_COLOR_MEDIUM);
                 }
@@ -121,7 +121,7 @@ export class ShopScene extends Phaser.Scene {
         this.upgradesContainer.setMask(mask);
 
         this.input.on(
-            "wheel",
+            'wheel',
             (
                 pointer: Phaser.Input.Pointer,
                 gameObjects: Phaser.GameObjects.GameObject[],
@@ -164,9 +164,7 @@ export class ShopScene extends Phaser.Scene {
 
         for (const cat in this.tabs) {
             if (this.tabs[cat as UpgradeCategory]) {
-                this.tabs[cat as UpgradeCategory]!.setColor(
-                    cat === category ? TEXT_COLOR : TEXT_COLOR_MEDIUM,
-                );
+                this.tabs[cat as UpgradeCategory]!.setColor(cat === category ? TEXT_COLOR : TEXT_COLOR_MEDIUM);
             }
         }
 
@@ -177,68 +175,50 @@ export class ShopScene extends Phaser.Scene {
             const y = index * 100;
 
             const currentCost =
-                upgrade.id === "sale"
-                    ? upgrade.cost
-                    : Math.ceil(upgrade.cost * GameManager.saleModifier);
+                upgrade.id === 'sale' ? upgrade.cost : Math.ceil(upgrade.cost * GameManager.saleModifier);
             const canAfford = light >= currentCost;
 
             const nameText = this.add.text(0, y, upgrade.name, {
-                fontSize: "22px",
+                fontSize: '22px',
                 color: TEXT_COLOR,
-                fontStyle: "bold",
-                fontFamily: "PixelFont",
+                fontStyle: 'bold',
+                fontFamily: 'PixelFont',
             });
 
             const descText = this.add.text(0, y + 28, upgrade.description, {
-                fontSize: "16px",
+                fontSize: '16px',
                 color: TEXT_COLOR_MEDIUM,
                 wordWrap: { width: this.cameras.main.width - 300 },
-                fontFamily: "PixelFont",
+                fontFamily: 'PixelFont',
             });
 
             const costText = this.add
-                .text(
-                    this.cameras.main.width - 200,
-                    y + 15,
-                    `Cost: ${Math.ceil(currentCost)}`,
-                    {
-                        fontSize: "18px",
-                        color: canAfford ? ACCENT_COLOR : TEXT_COLOR_DARK,
-                        fontStyle: "bold",
-                        fontFamily: "PixelFont",
-                    },
-                )
+                .text(this.cameras.main.width - 200, y + 15, `Cost: ${Math.ceil(currentCost)}`, {
+                    fontSize: '18px',
+                    color: canAfford ? ACCENT_COLOR : TEXT_COLOR_DARK,
+                    fontStyle: 'bold',
+                    fontFamily: 'PixelFont',
+                })
                 .setOrigin(1, 0);
 
             const buyButton = this.add.graphics();
-            const buttonRect = new Phaser.Geom.Rectangle(
-                this.cameras.main.width - 210,
-                y + 45,
-                120,
-                40,
-            );
+            const buttonRect = new Phaser.Geom.Rectangle(this.cameras.main.width - 210, y + 45, 120, 40);
 
             const drawButton = (color: number) => {
                 buyButton
                     .clear()
                     .fillStyle(color)
-                    .fillRoundedRect(
-                        buttonRect.x,
-                        buttonRect.y,
-                        buttonRect.width,
-                        buttonRect.height,
-                        10,
-                    );
+                    .fillRoundedRect(buttonRect.x, buttonRect.y, buttonRect.width, buttonRect.height, 10);
             };
 
             drawButton(canAfford ? BUY_BUTTON_COLOR : DISABLED_BUTTON_COLOR);
 
             const buyButtonText = this.add
-                .text(this.cameras.main.width - 150, y + 65, "BUY", {
-                    fontSize: "20px",
+                .text(this.cameras.main.width - 150, y + 65, 'BUY', {
+                    fontSize: '20px',
                     color: canAfford ? TEXT_COLOR : TEXT_COLOR_DARK,
-                    fontStyle: "bold",
-                    fontFamily: "PixelFont",
+                    fontStyle: 'bold',
+                    fontFamily: 'PixelFont',
                 })
                 .setOrigin(0.5);
 
@@ -249,18 +229,12 @@ export class ShopScene extends Phaser.Scene {
                         hitAreaCallback: Phaser.Geom.Rectangle.Contains,
                         useHandCursor: true,
                     })
-                    .on("pointerdown", () => this.purchaseUpgrade(upgrade))
-                    .on("pointerover", () => drawButton(BUY_BUTTON_COLOR_HOVER))
-                    .on("pointerout", () => drawButton(BUY_BUTTON_COLOR));
+                    .on('pointerdown', () => this.purchaseUpgrade(upgrade))
+                    .on('pointerover', () => drawButton(BUY_BUTTON_COLOR_HOVER))
+                    .on('pointerout', () => drawButton(BUY_BUTTON_COLOR));
             }
 
-            this.upgradesContainer.add([
-                nameText,
-                descText,
-                costText,
-                buyButton,
-                buyButtonText,
-            ]);
+            this.upgradesContainer.add([nameText, descText, costText, buyButton, buyButtonText]);
         });
 
         const totalHeight = categoryUpgrades.length * 100;
@@ -277,10 +251,7 @@ export class ShopScene extends Phaser.Scene {
 
     private purchaseUpgrade(upgrade: Upgrade) {
         const light = GameManager.getLight();
-        const currentCost =
-            upgrade.id === "sale"
-                ? upgrade.cost
-                : Math.ceil(upgrade.cost * GameManager.saleModifier);
+        const currentCost = upgrade.id === 'sale' ? upgrade.cost : Math.ceil(upgrade.cost * GameManager.saleModifier);
 
         if (light >= currentCost) {
             GameManager.setLight(light - currentCost);

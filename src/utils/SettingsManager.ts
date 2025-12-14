@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from 'phaser';
 
 export class SettingsManager {
     private static instance: SettingsManager;
@@ -23,7 +23,7 @@ export class SettingsManager {
     }
 
     public loadSettings() {
-        const savedSettings = localStorage.getItem("lighthouse-idle-settings");
+        const savedSettings = localStorage.getItem('lighthouse-idle-settings');
         if (savedSettings) {
             const parsed = JSON.parse(savedSettings);
             console.log(parsed);
@@ -47,10 +47,7 @@ export class SettingsManager {
             showFps: this.showFps,
             maxFps: this.maxFps,
         };
-        localStorage.setItem(
-            "lighthouse-idle-settings",
-            JSON.stringify(settings),
-        );
+        localStorage.setItem('lighthouse-idle-settings', JSON.stringify(settings));
     }
 
     public applySettings(scene: Phaser.Scene) {

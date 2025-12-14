@@ -1,9 +1,9 @@
-import Phaser from "phaser";
+import Phaser from 'phaser';
 
 const BORDER_COLOR = 0x5b6d84;
 const BG_COLOR = 0x1a2130;
-const TEXT_COLOR = "#FFFFFF";
-const ACCENT_COLOR = "#FBBF24";
+const TEXT_COLOR = '#FFFFFF';
+const ACCENT_COLOR = '#FBBF24';
 
 export class TutorialScene extends Phaser.Scene {
     private contentContainer!: Phaser.GameObjects.Container;
@@ -11,7 +11,7 @@ export class TutorialScene extends Phaser.Scene {
     private scrollMaxY = 0;
 
     constructor() {
-        super("TutorialScene");
+        super('TutorialScene');
     }
 
     create() {
@@ -25,29 +25,29 @@ export class TutorialScene extends Phaser.Scene {
             .strokeRect(0, 0, width, height);
 
         this.add
-            .text(width / 2, 40, "How to Play", {
-                fontSize: "32px",
+            .text(width / 2, 40, 'How to Play', {
+                fontSize: '32px',
                 color: TEXT_COLOR,
-                fontStyle: "bold",
-                fontFamily: "PixelFont",
+                fontStyle: 'bold',
+                fontFamily: 'PixelFont',
             })
             .setOrigin(0.5);
 
         const closeButton = this.add
-            .text(width - 30, 30, "X", {
-                fontSize: "28px",
+            .text(width - 30, 30, 'X', {
+                fontSize: '28px',
                 color: TEXT_COLOR,
-                fontFamily: "PixelFont",
+                fontFamily: 'PixelFont',
             })
             .setOrigin(0.5)
             .setInteractive({ useHandCursor: true });
 
-        closeButton.on("pointerdown", () => {
+        closeButton.on('pointerdown', () => {
             this.scene.stop();
-            this.scene.resume("TitleScene");
+            this.scene.resume('TitleScene');
         });
-        closeButton.on("pointerover", () => closeButton.setColor(ACCENT_COLOR));
-        closeButton.on("pointerout", () => closeButton.setColor(TEXT_COLOR));
+        closeButton.on('pointerover', () => closeButton.setColor(ACCENT_COLOR));
+        closeButton.on('pointerout', () => closeButton.setColor(TEXT_COLOR));
 
         this.contentContainer = this.add.container(0, 100);
 
@@ -62,20 +62,20 @@ export class TutorialScene extends Phaser.Scene {
 
         for (const section of tutorialText) {
             const header = this.add.text(50, y, section.title, {
-                fontSize: "24px",
+                fontSize: '24px',
                 color: ACCENT_COLOR,
-                fontStyle: "bold",
+                fontStyle: 'bold',
                 wordWrap: { width: width - 100 },
-                fontFamily: "PixelFont",
+                fontFamily: 'PixelFont',
             });
             this.contentContainer.add(header);
             y += 40;
 
             const content = this.add.text(50, y, section.content, {
-                fontSize: "18px",
+                fontSize: '18px',
                 color: TEXT_COLOR,
                 wordWrap: { width: width - 100 },
-                fontFamily: "PixelFont",
+                fontFamily: 'PixelFont',
             });
             this.contentContainer.add(content);
             y += content.height + 30;
@@ -93,7 +93,7 @@ export class TutorialScene extends Phaser.Scene {
         }
 
         this.input.on(
-            "wheel",
+            'wheel',
             (
                 pointer: Phaser.Input.Pointer,
                 gameObjects: Phaser.GameObjects.GameObject[],
@@ -115,34 +115,33 @@ export class TutorialScene extends Phaser.Scene {
     private getTutorialText(): { title: string; content: string }[] {
         return [
             {
-                title: "Objective",
+                title: 'Objective',
                 content:
-                    "You are the keeper of a mystical lighthouse. Your goal is to protect it from waves of shadowy creatures that emerge from the sea. Shine your light to vanquish them and gather their remnants to upgrade your lighthouse.",
+                    'You are the keeper of a mystical lighthouse. Your goal is to protect it from waves of shadowy creatures that emerge from the sea. Shine your light to vanquish them and gather their remnants to upgrade your lighthouse.',
             },
             {
-                title: "The Light",
+                title: 'The Light',
                 content:
-                    "The lighthouse beam is your primary weapon. It automatically rotates and damages any creature it touches. You can click and drag the light to manually aim it.",
+                    'The lighthouse beam is your primary weapon. It automatically rotates and damages any creature it touches. You can click and drag the light to manually aim it.',
             },
             {
-                title: "Resources",
+                title: 'Resources',
                 content:
-                    " - Light: Gathered automatically over time and by defeating creatures. Used to purchase upgrades.\n - Energy: Click the lighthouse to generate Energy. Energy is used for powerful abilities.",
+                    ' - Light: Gathered automatically over time and by defeating creatures. Used to purchase upgrades.\n - Energy: Click the lighthouse to generate Energy. Energy is used for powerful abilities.',
             },
             {
-                title: "Upgrades",
+                title: 'Upgrades',
                 content:
-                    "Spend your Light in the Shop (the coin icon) to buy permanent upgrades for your lighthouse, improving its offensive, defensive, and economic capabilities.",
+                    'Spend your Light in the Shop (the coin icon) to buy permanent upgrades for your lighthouse, improving its offensive, defensive, and economic capabilities.',
             },
             {
-                title: "Waves",
-                content:
-                    "Creatures attack in waves. Each wave is stronger than the last. Survive as long as you can!",
+                title: 'Waves',
+                content: 'Creatures attack in waves. Each wave is stronger than the last. Survive as long as you can!',
             },
             {
-                title: "The Tiles",
+                title: 'The Tiles',
                 content:
-                    "The ground around your lighthouse is made of tiles. Creatures will damage these tiles. If a tile is destroyed, you can rebuild it by clicking on it, which costs Light.",
+                    'The ground around your lighthouse is made of tiles. Creatures will damage these tiles. If a tile is destroyed, you can rebuild it by clicking on it, which costs Light.',
             },
         ];
     }

@@ -1,6 +1,6 @@
-import GameManager from "../GameManager";
-import { ArchetypeID } from "../data/archetypes";
-import { RELICS, getRelicById } from "../data/relics";
+import GameManager from '../GameManager';
+import { ArchetypeID } from '../data/archetypes';
+import { RELICS, getRelicById } from '../data/relics';
 
 class PrestigeManager {
     private static instance: PrestigeManager;
@@ -73,11 +73,11 @@ class PrestigeManager {
             unlockedRelics: this._unlockedRelics,
             activeArchetype: this._activeArchetype,
         };
-        localStorage.setItem("lighthouse_idle_prestige", JSON.stringify(data));
+        localStorage.setItem('lighthouse_idle_prestige', JSON.stringify(data));
     }
 
     private load() {
-        const stored = localStorage.getItem("lighthouse_idle_prestige");
+        const stored = localStorage.getItem('lighthouse_idle_prestige');
         if (stored) {
             const data = JSON.parse(stored);
             this._aether = data.aether || 0;

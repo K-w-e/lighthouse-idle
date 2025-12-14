@@ -1,6 +1,6 @@
-import Phaser from "phaser";
-import GameScene from "../scenes/GameScene";
-import GameManager from "../GameManager";
+import Phaser from 'phaser';
+import GameScene from '../scenes/GameScene';
+import GameManager from '../GameManager';
 
 export class Wave extends Phaser.GameObjects.Container {
     declare body: Phaser.Physics.Arcade.Body;
@@ -69,40 +69,20 @@ export class Wave extends Phaser.GameObjects.Container {
         this.crestColor = 0x4a6572;
         this.health = this.maxHealth;
 
-        const angle = Phaser.Math.Angle.Between(
-            this.x,
-            this.y,
-            this.lighthouse.x,
-            this.lighthouse.y,
-        );
+        const angle = Phaser.Math.Angle.Between(this.x, this.y, this.lighthouse.x, this.lighthouse.y);
         this.setRotation(angle + Math.PI / 2);
-        this.waveWidth = Phaser.Math.Between(
-            this.minWaveWidth,
-            this.maxWaveWidth,
-        );
+        this.waveWidth = Phaser.Math.Between(this.minWaveWidth, this.maxWaveWidth);
 
-        this.waveAmplitude = Phaser.Math.Between(
-            this.minWaveAmplitude,
-            this.maxWaveAmplitude,
-        );
-        this.waveFrequency = Phaser.Math.FloatBetween(
-            this.minWaveFrequency,
-            this.maxWaveFrequency,
-        );
+        this.waveAmplitude = Phaser.Math.Between(this.minWaveAmplitude, this.maxWaveAmplitude);
+        this.waveFrequency = Phaser.Math.FloatBetween(this.minWaveFrequency, this.maxWaveFrequency);
         this.waveHeight = this.waveAmplitude * this.waveHeightFactor;
         const foamCount = this.waveWidth / this.foamCountFactor;
         this.foamPositions = [];
         for (let i = 0; i < foamCount; i++) {
             this.foamPositions.push({
-                x: Phaser.Math.FloatBetween(
-                    -this.waveWidth / 2,
-                    this.waveWidth / 2,
-                ),
+                x: Phaser.Math.FloatBetween(-this.waveWidth / 2, this.waveWidth / 2),
                 y: Phaser.Math.FloatBetween(this.foamMinY, this.foamYSpread),
-                alpha: Phaser.Math.FloatBetween(
-                    this.foamMinAlpha,
-                    this.foamMaxAlpha,
-                ),
+                alpha: Phaser.Math.FloatBetween(this.foamMinAlpha, this.foamMaxAlpha),
             });
         }
 
@@ -141,13 +121,9 @@ export class Wave extends Phaser.GameObjects.Container {
             const normalizedPos = Math.abs(i) / halfWidth;
             const taper = 1 - Math.pow(normalizedPos, 2.5);
 
-            const y1 =
-                Math.sin((i + this.time) * this.waveFrequency) *
-                this.waveAmplitude;
+            const y1 = Math.sin((i + this.time) * this.waveFrequency) * this.waveAmplitude;
             const y2 =
-                Math.sin(
-                    (i + this.time) * this.waveFrequency * this.waveFrequency2,
-                ) *
+                Math.sin((i + this.time) * this.waveFrequency * this.waveFrequency2) *
                 (this.waveAmplitude * this.waveAmplitude2);
             const y = (y1 + y2) * taper;
             points.push({ x: i, y: y, taper: taper });
@@ -163,12 +139,7 @@ export class Wave extends Phaser.GameObjects.Container {
         this.graphics.fillStyle(this.crestColor, 1);
         for (let i = 0; i < points.length; i++) {
             if (points[i].taper > 0.1) {
-                this.graphics.fillRect(
-                    points[i].x,
-                    points[i].y - 2,
-                    this.pixelSize,
-                    4,
-                );
+                this.graphics.fillRect(points[i].x, points[i].y - 2, this.pixelSize, 4);
             }
         }
 
@@ -178,22 +149,15 @@ export class Wave extends Phaser.GameObjects.Container {
             if (normalizedPos > 1) return;
 
             const taper = 1 - Math.pow(normalizedPos, 2.5);
-            const y1 =
-                Math.sin((pos.x + this.time) * this.waveFrequency) *
-                this.waveAmplitude;
+            const y1 = Math.sin((pos.x + this.time) * this.waveFrequency) * this.waveAmplitude;
             const y2 =
-                Math.sin(
-                    (pos.x + this.time) *
-                        this.waveFrequency *
-                        this.waveFrequency2,
-                ) *
+                Math.sin((pos.x + this.time) * this.waveFrequency * this.waveFrequency2) *
                 (this.waveAmplitude * this.waveAmplitude2);
             const waveY = (y1 + y2) * taper;
 
             this.graphics.setAlpha(Math.max(0.3, pos.alpha * taper));
             const x = Math.floor(pos.x / this.pixelSize) * this.pixelSize;
-            const finalY =
-                Math.floor((pos.y + waveY) / this.pixelSize) * this.pixelSize;
+            const finalY = Math.floor((pos.y + waveY) / this.pixelSize) * this.pixelSize;
             this.graphics.fillRect(x, finalY, this.pixelSize, this.pixelSize);
         });
     }
@@ -208,14 +172,8 @@ export class Wave extends Phaser.GameObjects.Container {
 
             if (pos.alpha <= 0) {
                 pos.y = Phaser.Math.FloatBetween(this.foamMinY, this.foamMaxY);
-                pos.x = Phaser.Math.FloatBetween(
-                    -this.waveWidth / 2,
-                    this.waveWidth / 2,
-                );
-                pos.alpha = Phaser.Math.FloatBetween(
-                    this.foamMinAlpha,
-                    this.foamMaxAlpha,
-                );
+                pos.x = Phaser.Math.FloatBetween(-this.waveWidth / 2, this.waveWidth / 2);
+                pos.alpha = Phaser.Math.FloatBetween(this.foamMinAlpha, this.foamMaxAlpha);
             }
         });
 
@@ -231,22 +189,16 @@ export class Wave extends Phaser.GameObjects.Container {
 
         if (this.lighthouse) {
             const currentSpeed =
-                (this.isSlowed
-                    ? this.originalSpeed * this.slowedSpeed
-                    : this.originalSpeed) * GameManager.enemySpeedModifier;
-            this.scene.physics.moveToObject(
-                this,
-                this.lighthouse,
-                currentSpeed,
-            );
+                (this.isSlowed ? this.originalSpeed * this.slowedSpeed : this.originalSpeed) *
+                GameManager.enemySpeedModifier;
+            this.scene.physics.moveToObject(this, this.lighthouse, currentSpeed);
         }
     }
 
     public slowDown(factor: number, duration: number) {
         if (!this.isSlowed) {
             this.isSlowed = true;
-            this.originalSpeed =
-                this.originalSpeed * Math.max(this.minSlowFactor, 1 - factor);
+            this.originalSpeed = this.originalSpeed * Math.max(this.minSlowFactor, 1 - factor);
         }
         this.slowTimer = duration;
     }

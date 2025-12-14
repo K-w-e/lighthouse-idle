@@ -1,16 +1,16 @@
-import Phaser from "phaser";
-import GameManager from "../GameManager";
+import Phaser from 'phaser';
+import GameManager from '../GameManager';
 
 const BORDER_COLOR = 0x5b6d84;
 const BG_COLOR = 0x1a2130;
-const TEXT_COLOR = "#FFFFFF";
-const ACCENT_COLOR = "#FBBF24";
+const TEXT_COLOR = '#FFFFFF';
+const ACCENT_COLOR = '#FBBF24';
 
 export class StatsScene extends Phaser.Scene {
     private statsContainer!: Phaser.GameObjects.Container;
 
     constructor() {
-        super("StatsScene");
+        super('StatsScene');
     }
 
     create() {
@@ -24,34 +24,34 @@ export class StatsScene extends Phaser.Scene {
             .strokeRect(0, 0, width, height);
 
         this.add
-            .text(width / 2, 40, "Statistics", {
-                fontSize: "32px",
+            .text(width / 2, 40, 'Statistics', {
+                fontSize: '32px',
                 color: TEXT_COLOR,
-                fontStyle: "bold",
-                fontFamily: "PixelFont",
+                fontStyle: 'bold',
+                fontFamily: 'PixelFont',
             })
             .setOrigin(0.5);
 
         const closeButton = this.add
-            .text(width - 30, 30, "X", {
-                fontSize: "28px",
+            .text(width - 30, 30, 'X', {
+                fontSize: '28px',
                 color: TEXT_COLOR,
-                fontFamily: "PixelFont",
+                fontFamily: 'PixelFont',
             })
             .setOrigin(0.5)
             .setInteractive({ useHandCursor: true });
 
-        closeButton.on("pointerdown", () => {
+        closeButton.on('pointerdown', () => {
             this.scene.stop();
-            this.scene.resume("GameScene");
+            this.scene.resume('GameScene');
         });
-        closeButton.on("pointerover", () => closeButton.setColor(ACCENT_COLOR));
-        closeButton.on("pointerout", () => closeButton.setColor(TEXT_COLOR));
+        closeButton.on('pointerover', () => closeButton.setColor(ACCENT_COLOR));
+        closeButton.on('pointerout', () => closeButton.setColor(TEXT_COLOR));
 
         this.statsContainer = this.add.container(0, 100);
 
         const stats = this.getStats();
-        const categories = ["Offensive", "Defensive", "Economic", "Energy"];
+        const categories = ['Offensive', 'Defensive', 'Economic', 'Energy'];
         const cellWidth = width / 2;
         const cellHeight = (height - 150) / 2;
         let categoryIndex = 0;
@@ -71,26 +71,21 @@ export class StatsScene extends Phaser.Scene {
 
                 const header = this.add
                     .text(cellWidth / 2, 20, category, {
-                        fontSize: "24px",
+                        fontSize: '24px',
                         color: ACCENT_COLOR,
-                        fontStyle: "bold",
-                        fontFamily: "PixelFont",
+                        fontStyle: 'bold',
+                        fontFamily: 'PixelFont',
                     })
                     .setOrigin(0.5);
                 cellContainer.add(header);
 
                 let statY = 60;
                 categoryStats.forEach((stat) => {
-                    const statText = this.add.text(
-                        40,
-                        statY,
-                        `${stat.name}: ${stat.value}`,
-                        {
-                            fontSize: "18px",
-                            color: TEXT_COLOR,
-                            fontFamily: "PixelFont",
-                        },
-                    );
+                    const statText = this.add.text(40, statY, `${stat.name}: ${stat.value}`, {
+                        fontSize: '18px',
+                        color: TEXT_COLOR,
+                        fontFamily: 'PixelFont',
+                    });
                     cellContainer.add(statText);
                     statY += 30;
                 });
@@ -105,86 +100,84 @@ export class StatsScene extends Phaser.Scene {
         const gm = GameManager;
         return {
             Offensive: [
-                { name: "Beam Radius", value: gm.lightRadius.toFixed(2) },
-                { name: "Beam Angle", value: gm.lightAngle.toFixed(2) },
-                { name: "Rotation Speed", value: gm.rotationSpeed.toFixed(2) },
+                { name: 'Beam Radius', value: gm.lightRadius.toFixed(2) },
+                { name: 'Beam Angle', value: gm.lightAngle.toFixed(2) },
+                { name: 'Rotation Speed', value: gm.rotationSpeed.toFixed(2) },
                 {
-                    name: "Beam Penetration",
+                    name: 'Beam Penetration',
                     value: gm.beamPenetration.toString(),
                 },
-                { name: "Beam Count", value: gm.lightBeamCount.toString() },
+                { name: 'Beam Count', value: gm.lightBeamCount.toString() },
                 {
-                    name: "Chain Lightning Chance",
+                    name: 'Chain Lightning Chance',
                     value: `${(gm.chainLightningChance * 100).toFixed(0)}%`,
                 },
             ],
             Defensive: [
                 {
-                    name: "Lighthouse Health",
+                    name: 'Lighthouse Health',
                     value: `${gm.lighthouseHealth.toFixed(0)} / ${gm.maxLighthouseHealth}`,
                 },
                 {
-                    name: "Lighthouse Health Regen",
+                    name: 'Lighthouse Health Regen',
                     value: gm.lighthouseHealthRegen.toFixed(2),
                 },
-                { name: "Tile Health", value: gm.tileHealth.toString() },
+                { name: 'Tile Health', value: gm.tileHealth.toString() },
                 {
-                    name: "Slowing Pulse",
-                    value: gm.hasSlowingPulse
-                        ? `Active (${gm.slowingPulseSlowFactor.toFixed(2)} slow)`
-                        : "Inactive",
+                    name: 'Slowing Pulse',
+                    value: gm.hasSlowingPulse ? `Active (${gm.slowingPulseSlowFactor.toFixed(2)} slow)` : 'Inactive',
                 },
                 {
-                    name: "Auto Builder",
-                    value: gm.hasAutoBuilder ? "Active" : "Inactive",
+                    name: 'Auto Builder',
+                    value: gm.hasAutoBuilder ? 'Active' : 'Inactive',
                 },
             ],
             Economic: [
                 {
-                    name: "Light per Second",
+                    name: 'Light per Second',
                     value: gm.lightPerSecond.toFixed(2),
                 },
                 {
-                    name: "Wave Fragments Modifier",
+                    name: 'Wave Fragments Modifier',
                     value: gm.waveFragmentsModifier.toFixed(2),
                 },
                 {
-                    name: "Kinetic Siphon Modifier",
+                    name: 'Kinetic Siphon Modifier',
                     value: gm.kineticSiphonModifier.toFixed(2),
                 },
                 {
-                    name: "Tidal Force Modifier",
+                    name: 'Tidal Force Modifier',
                     value: gm.tidalForceModifier.toFixed(2),
                 },
-                { name: "Light Multiplier", value: `x${gm.lightMultiplier}` },
+                { name: 'Light Multiplier', value: `x${gm.lightMultiplier}` },
                 {
-                    name: "Auto Light Collector",
+                    name: 'Auto Light Collector',
                     value: `${gm.autoLightCollectorRate.toFixed(2)}/sec`,
                 },
                 {
-                    name: "Light Interest Rate",
+                    name: 'Light Interest Rate',
                     value: `${(gm.lightInterestRate * 100).toFixed(2)}%`,
                 },
             ],
             Energy: [
                 {
-                    name: "Energy",
+                    name: 'Energy',
                     value: `${gm.currentEnergy.toFixed(0)} / ${gm.maxEnergy}`,
                 },
                 {
-                    name: "Energy per Click",
+                    name: 'Energy per Click',
                     value: gm.energyPerClick.toFixed(2),
                 },
                 {
-                    name: "Energy Drain Rate",
+                    name: 'Energy Drain Rate',
                     value: gm.energyDrainRate.toFixed(2),
                 },
                 {
-                    name: "Auto Energy Collector",
+                    name: 'Auto Energy Collector',
                     value: `${gm.autoEnergyCollectorRate.toFixed(2)}/sec`,
                 },
                 {
-                    name: "Overcharge Chance",
+                    name: 'Overcharge Chance',
                     value: `${(gm.overchargeChance * 100).toFixed(0)}%`,
                 },
             ],

@@ -1,14 +1,14 @@
-import Phaser from "phaser";
-import GameScene from "./scenes/GameScene";
-import PreloaderScene from "./scenes/PreloaderScene";
-import UIScene from "./scenes/UIScene";
-import { StatsScene } from "./scenes/StatsScene";
-import TitleScene from "./scenes/TitleScene";
-import { TutorialScene } from "./scenes/TutorialScene";
-import { SettingsScene } from "./scenes/SettingsScene";
-import PrestigeScene from "./scenes/PrestigeScene";
+import Phaser from 'phaser';
+import GameScene from './scenes/GameScene';
+import PreloaderScene from './scenes/PreloaderScene';
+import UIScene from './scenes/UIScene';
+import { StatsScene } from './scenes/StatsScene';
+import TitleScene from './scenes/TitleScene';
+import { TutorialScene } from './scenes/TutorialScene';
+import { SettingsScene } from './scenes/SettingsScene';
+import PrestigeScene from './scenes/PrestigeScene';
 
-import { SettingsManager } from "./utils/SettingsManager";
+import { SettingsManager } from './utils/SettingsManager';
 
 const settingsManager = SettingsManager.getInstance();
 
@@ -20,20 +20,11 @@ const config: Phaser.Types.Core.GameConfig = {
     },
     width: 1200,
     height: 900,
-    parent: "game-container",
+    parent: 'game-container',
     pixelArt: true,
-    scene: [
-        PreloaderScene,
-        TitleScene,
-        GameScene,
-        UIScene,
-        StatsScene,
-        SettingsScene,
-        TutorialScene,
-        PrestigeScene,
-    ],
+    scene: [PreloaderScene, TitleScene, GameScene, UIScene, StatsScene, SettingsScene, TutorialScene, PrestigeScene],
     physics: {
-        default: "arcade",
+        default: 'arcade',
         arcade: {
             //debug: true,
         },

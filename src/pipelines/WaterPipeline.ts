@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from 'phaser';
 
 const fragShader = `
 precision mediump float;
@@ -34,18 +34,16 @@ void main()
 }
 `;
 
-export default class WaterPipeline
-    extends Phaser.Renderer.WebGL.Pipelines.PostFXPipeline
-{
+export default class WaterPipeline extends Phaser.Renderer.WebGL.Pipelines.PostFXPipeline {
     constructor(game: Phaser.Game) {
         super({
             game,
-            name: "WaterPipeline",
+            name: 'WaterPipeline',
             fragShader,
         });
     }
 
     onPreRender() {
-        this.set1f("uTime", this.game.loop.time / 1000);
+        this.set1f('uTime', this.game.loop.time / 1000);
     }
 }
