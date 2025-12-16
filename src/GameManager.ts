@@ -205,7 +205,6 @@ class GameManager {
 
         this.purchasedUpgrades.add(type);
 
-        // Instant effects need to remain here (actions like heal or rebuild)
         if (this.handleInstantUpgrade(type, upgrade.value || 0)) {
             return;
         }
@@ -213,9 +212,6 @@ class GameManager {
         this.recalculateStats();
     }
 
-    /**
-     * Handles upgrades that are one-time actions and not persistent stats.
-     */
     private handleInstantUpgrade(type: string, value: number): boolean {
         switch (type) {
             case 'island_reconstruction':
@@ -338,10 +334,6 @@ class GameManager {
         this.uiScene.updateEnergy(this.currentEnergy, this.maxEnergy);
     }
 
-    /**
-     * Resets all stats to their base default values.
-     * This is the first step in recalculating stats.
-     */
     private resetStats() {
         this.lightRadius = 150;
         this.lightAngle = 3;
@@ -370,7 +362,6 @@ class GameManager {
         this.tileHealth = 10;
         this.beamDamage = 1;
         this.hasAutoBuilder = false;
-        // do not reset invulnerable status timers here, they are transient
 
         // Economic (preserve current light)
         this.lightPerSecond = 0;
@@ -388,9 +379,6 @@ class GameManager {
         this.baseTimeScale = 1;
     }
 
-    /**
-     * Applies the effect of a single upgrade.
-     */
     private applyUpgradeEffect(type: string) {
         const upgrade = getUpgradeById(type);
         if (!upgrade) return;
@@ -496,13 +484,10 @@ class GameManager {
     public recalculateStats() {
         this.resetStats();
 
-        // Apply Upgrades
         this.purchasedUpgrades.forEach((type) => this.applyUpgradeEffect(type));
 
-        // Apply Prestige (Archetypes & Relics)
         this.applyPrestigeModifiers();
 
-        // Update UI logic (clamping values)
         this.currentEnergy = Math.min(this.currentEnergy, this.maxEnergy);
         this.lighthouseHealth = Math.min(this.lighthouseHealth, this.maxLighthouseHealth);
 
