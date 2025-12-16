@@ -11,6 +11,7 @@ export interface Archetype {
     description: string;
     passiveDescription: string;
     activeAbilityDescription: string;
+    cost: number;
 }
 
 export const ARCHETYPES: Record<ArchetypeID, Archetype> = {
@@ -20,6 +21,7 @@ export const ARCHETYPES: Record<ArchetypeID, Archetype> = {
         description: 'A standard lighthouse keeper.',
         passiveDescription: 'None',
         activeAbilityDescription: 'None',
+        cost: 0,
     },
     [ArchetypeID.CHRONOMANCER]: {
         id: ArchetypeID.CHRONOMANCER,
@@ -27,6 +29,7 @@ export const ARCHETYPES: Record<ArchetypeID, Archetype> = {
         description: 'Manipulates the flow of time to gain an advantage.',
         passiveDescription: 'Logic ticks 20% faster.',
         activeAbilityDescription: 'Light Surge: Temporarily expand light beam.',
+        cost: 50,
     },
     [ArchetypeID.STORMBRINGER]: {
         id: ArchetypeID.STORMBRINGER,
@@ -34,6 +37,7 @@ export const ARCHETYPES: Record<ArchetypeID, Archetype> = {
         description: 'Harnesses the fury of the storm.',
         passiveDescription: 'Chance to strike enemies with lightning on spawn. (10%)',
         activeAbilityDescription: 'Overload: Massive screen-wide damage.',
+        cost: 75,
     },
     [ArchetypeID.ARCHITECT]: {
         id: ArchetypeID.ARCHITECT,
@@ -41,5 +45,6 @@ export const ARCHETYPES: Record<ArchetypeID, Archetype> = {
         description: 'Builder of impenetrable defenses.',
         passiveDescription: 'Auto-Builder is always active and free.',
         activeAbilityDescription: 'Fortified Construct: Temporary invulnerability.',
+        cost: 60,
     },
 };

@@ -120,12 +120,13 @@ export default class PrestigeScene extends Phaser.Scene {
         let y = 0;
 
         Object.values(ARCHETYPES).forEach((arch) => {
-            if (arch.id === ArchetypeID.NONE) return;
-
+            const isUnlocked = PrestigeManager.unlockedArchetypes.includes(arch.id);
             const isActive = PrestigeManager.activeArchetype === arch.id;
+            const canAfford = PrestigeManager.aether >= arch.cost;
+
             const cardBg = this.add.graphics();
             cardBg.fillStyle(isActive ? 0x312e81 : 0x1e293b);
-            cardBg.lineStyle(2, isActive ? 0x818cf8 : 0x334155);
+            cardBg.lineStyle(2, isActive ? 0x818cf8 : isUnlocked ? 0x64748b : 0x334155);
             cardBg.fillRoundedRect(width / 2 - 250, y, 500, 150, 10);
             cardBg.strokeRoundedRect(width / 2 - 250, y, 500, 150, 10);
 
@@ -136,61 +137,98 @@ export default class PrestigeScene extends Phaser.Scene {
                 fontFamily: 'PixelFont',
             });
 
-            const desc = this.add.text(
-                width / 2 - 230,
-                y + 45,
-                `${arch.description}\nPassive: ${arch.passiveDescription}\nActive: ${arch.activeAbilityDescription}`,
-                {
-                    fontSize: '12px',
-                    color: '#CBD5E1',
-                    wordWrap: { width: 350 },
-                    fontFamily: 'PixelFont',
-                },
-            );
+            const descText =
+                arch.cost > 0 && !isUnlocked
+                    ? `${arch.description}\nCost: ${arch.cost} Aether\nPassive: ${arch.passiveDescription}`
+                    : `${arch.description}\nPassive: ${arch.passiveDescription}\nActive: ${arch.activeAbilityDescription}`;
+
+            const desc = this.add.text(width / 2 - 230, y + 45, descText, {
+                fontSize: '12px',
+                color: '#CBD5E1',
+                wordWrap: { width: 350 },
+                fontFamily: 'PixelFont',
+            });
 
             this.container.add([cardBg, name, desc]);
 
-            if (!isActive) {
+            if (isUnlocked) {
+                if (!isActive) {
+                    const btnX = width / 2 + 150;
+                    const btnY = y + 30;
+                    const btnW = 80;
+                    const btnH = 40;
+
+                    const btn = this.add.graphics();
+                    btn.fillStyle(0x4f46e5);
+                    btn.fillRoundedRect(btnX, btnY, btnW, btnH, 5);
+                    btn.lineStyle(2, 0xffffff);
+                    btn.strokeRoundedRect(btnX, btnY, btnW, btnH, 5);
+
+                    const btnText = this.add
+                        .text(btnX + btnW / 2, btnY + btnH / 2, 'SELECT', {
+                            fontSize: '14px',
+                            fontFamily: 'PixelFont',
+                            color: '#FFFFFF',
+                        })
+                        .setOrigin(0.5);
+
+                    const clickZone = this.add
+                        .zone(btnX + btnW / 2, btnY + btnH / 2, btnW, btnH)
+                        .setInteractive({ useHandCursor: true })
+                        .on('pointerdown', () => {
+                            PrestigeManager.setArchetype(arch.id);
+                            GameManager.refreshPrestigeModifiers();
+                            this.refreshContent();
+                        });
+
+                    this.container.add([btn, btnText, clickZone]);
+                } else {
+                    const activeText = this.add
+                        .text(width / 2 + 190, y + 50, 'ACTIVE', {
+                            color: '#4ADE80',
+                            fontSize: '16px',
+                            fontFamily: 'PixelFont',
+                            fontStyle: 'bold',
+                        })
+                        .setOrigin(0.5);
+                    this.container.add(activeText);
+                }
+            } else {
+                // Buy Button
                 const btnX = width / 2 + 150;
                 const btnY = y + 30;
                 const btnW = 80;
                 const btnH = 40;
 
                 const btn = this.add.graphics();
-                btn.fillStyle(0x4f46e5);
+                btn.fillStyle(canAfford ? 0x10b981 : 0x475569);
                 btn.fillRoundedRect(btnX, btnY, btnW, btnH, 5);
 
-                btn.lineStyle(2, 0xffffff);
-                btn.strokeRoundedRect(btnX, btnY, btnW, btnH, 5);
+                if (canAfford) {
+                    btn.lineStyle(2, 0xffffff);
+                    btn.strokeRoundedRect(btnX, btnY, btnW, btnH, 5);
+                }
 
                 const btnText = this.add
-                    .text(btnX + btnW / 2, btnY + btnH / 2, 'SELECT', {
+                    .text(btnX + btnW / 2, btnY + btnH / 2, `Buy ${arch.cost}`, {
                         fontSize: '14px',
                         fontFamily: 'PixelFont',
                         color: '#FFFFFF',
                     })
                     .setOrigin(0.5);
 
-                const clickZone = this.add
-                    .zone(btnX + btnW / 2, btnY + btnH / 2, btnW, btnH)
-                    .setInteractive({ useHandCursor: true })
-                    .on('pointerdown', () => {
-                        console.log(`Selecting archetype: ${arch.id}`);
-                        PrestigeManager.setArchetype(arch.id);
-                        this.refreshContent();
-                    });
-
-                this.container.add([btn, btnText, clickZone]);
-            } else {
-                const activeText = this.add
-                    .text(width / 2 + 190, y + 50, 'ACTIVE', {
-                        color: '#4ADE80',
-                        fontSize: '16px',
-                        fontFamily: 'PixelFont',
-                        fontStyle: 'bold',
-                    })
-                    .setOrigin(0.5);
-                this.container.add(activeText);
+                if (canAfford) {
+                    const clickZone = this.add
+                        .zone(btnX + btnW / 2, btnY + btnH / 2, btnW, btnH)
+                        .setInteractive({ useHandCursor: true })
+                        .on('pointerdown', () => {
+                            if (PrestigeManager.unlockArchetype(arch.id)) {
+                                this.refreshContent();
+                            }
+                        });
+                    this.container.add(clickZone);
+                }
+                this.container.add([btn, btnText]);
             }
 
             y += 170;
@@ -203,11 +241,12 @@ export default class PrestigeScene extends Phaser.Scene {
 
         RELICS.forEach((relic) => {
             const isUnlocked = PrestigeManager.unlockedRelics.includes(relic.id);
+            const isActive = PrestigeManager.activeRelics.includes(relic.id);
             const canAfford = PrestigeManager.aether >= relic.cost;
 
             const cardBg = this.add.graphics();
-            cardBg.fillStyle(isUnlocked ? 0x064e3b : 0x1e293b);
-            cardBg.lineStyle(2, isUnlocked ? 0x34d399 : 0x334155);
+            cardBg.fillStyle(isUnlocked ? (isActive ? 0x064e3b : 0x0f172a) : 0x1e293b);
+            cardBg.lineStyle(2, isUnlocked ? (isActive ? 0x34d399 : 0x475569) : 0x334155);
             cardBg.fillRoundedRect(width / 2 - 250, y, 500, 150, 10);
             cardBg.strokeRoundedRect(width / 2 - 250, y, 500, 150, 10);
 
@@ -269,15 +308,36 @@ export default class PrestigeScene extends Phaser.Scene {
 
                 this.container.add([btn, btnText]);
             } else {
-                const activeText = this.add
-                    .text(width / 2 + 190, y + 50, 'OWNED', {
-                        color: '#4ADE80',
-                        fontSize: '16px',
+                // Toggle Button
+                const btnX = width / 2 + 150;
+                const btnY = y + 30;
+                const btnW = 100;
+                const btnH = 40;
+
+                const btn = this.add.graphics();
+                btn.fillStyle(isActive ? 0xef4444 : 0x10b981);
+                btn.fillRoundedRect(btnX, btnY, btnW, btnH, 5);
+                btn.lineStyle(2, 0xffffff);
+                btn.strokeRoundedRect(btnX, btnY, btnW, btnH, 5);
+
+                const btnText = this.add
+                    .text(btnX + btnW / 2, btnY + btnH / 2, isActive ? 'DEACTIVATE' : 'ACTIVATE', {
+                        fontSize: '14px',
                         fontFamily: 'PixelFont',
-                        fontStyle: 'bold',
+                        color: '#FFFFFF',
                     })
                     .setOrigin(0.5);
-                this.container.add(activeText);
+
+                const clickZone = this.add
+                    .zone(btnX + btnW / 2, btnY + btnH / 2, btnW, btnH)
+                    .setInteractive({ useHandCursor: true })
+                    .on('pointerdown', () => {
+                        PrestigeManager.toggleRelic(relic.id);
+                        GameManager.refreshPrestigeModifiers();
+                        this.refreshContent();
+                    });
+
+                this.container.add([btn, btnText, clickZone]);
             }
 
             y += 170;

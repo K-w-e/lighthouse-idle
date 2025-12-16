@@ -352,6 +352,10 @@ export default class UIScene extends Phaser.Scene {
                 this.megaBombCooldownText.setText('');
                 this.megaBombButton.setAlpha(1);
             }
+        } else {
+            this.megaBombButton.setVisible(false);
+            this.megaBombText.setVisible(false);
+            this.megaBombCooldownText.setVisible(false);
         }
 
         if (GameManager.hasLightSurge) {
@@ -366,6 +370,10 @@ export default class UIScene extends Phaser.Scene {
                 this.lightSurgeCooldownText.setText('');
                 this.lightSurgeButton.setAlpha(1);
             }
+        } else {
+            this.lightSurgeButton.setVisible(false);
+            this.lightSurgeText.setVisible(false);
+            this.lightSurgeCooldownText.setVisible(false);
         }
 
         if (PrestigeManager.activeArchetype === ArchetypeID.ARCHITECT) {
@@ -380,6 +388,10 @@ export default class UIScene extends Phaser.Scene {
                 this.architectCooldownText.setText('');
                 this.architectButton.setAlpha(1);
             }
+        } else {
+            this.architectButton.setVisible(false);
+            this.architectText.setVisible(false);
+            this.architectCooldownText.setVisible(false);
         }
     }
 

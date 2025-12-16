@@ -1,5 +1,5 @@
 import GameManager from '../GameManager';
-import { ArchetypeID } from '../data/archetypes';
+import { ARCHETYPES, ArchetypeID } from '../data/archetypes';
 import { RELICS, getRelicById } from '../data/relics';
 
 class PrestigeManager {
@@ -7,7 +7,9 @@ class PrestigeManager {
 
     private _aether: number = 0;
     private _unlockedRelics: string[] = [];
+    private _activeRelics: string[] = [];
     private _activeArchetype: ArchetypeID = ArchetypeID.NONE;
+    private _unlockedArchetypes: ArchetypeID[] = [ArchetypeID.NONE];
 
     private _totalLightEarnedThisRun: number = 0;
     private _highestWaveThisRun: number = 0;
@@ -35,9 +37,33 @@ class PrestigeManager {
         return this._unlockedRelics;
     }
 
+    public get activeRelics(): string[] {
+        return this._activeRelics;
+    }
+
+    public get unlockedArchetypes(): ArchetypeID[] {
+        return this._unlockedArchetypes;
+    }
+
     public setArchetype(id: ArchetypeID) {
-        this._activeArchetype = id;
-        this.save();
+        if (this._unlockedArchetypes.includes(id)) {
+            this._activeArchetype = id;
+            this.save();
+        }
+    }
+
+    public unlockArchetype(id: ArchetypeID): boolean {
+        const archetype = ARCHETYPES[id];
+        if (!archetype) return false;
+        if (this._unlockedArchetypes.includes(id)) return true;
+
+        if (this._aether >= archetype.cost) {
+            this._aether -= archetype.cost;
+            this._unlockedArchetypes.push(id);
+            this.save();
+            return true;
+        }
+        return false;
     }
 
     public unlockRelic(id: string): boolean {
@@ -52,6 +78,18 @@ class PrestigeManager {
             return true;
         }
         return false;
+    }
+
+    public toggleRelic(id: string): void {
+        if (!this._unlockedRelics.includes(id)) return;
+
+        const index = this._activeRelics.indexOf(id);
+        if (index > -1) {
+            this._activeRelics.splice(index, 1);
+        } else {
+            this._activeRelics.push(id);
+        }
+        this.save();
     }
 
     public calculatePotentialAether(): number {
@@ -71,7 +109,9 @@ class PrestigeManager {
         const data = {
             aether: this._aether,
             unlockedRelics: this._unlockedRelics,
+            activeRelics: this._activeRelics,
             activeArchetype: this._activeArchetype,
+            unlockedArchetypes: this._unlockedArchetypes,
         };
         localStorage.setItem('lighthouse_idle_prestige', JSON.stringify(data));
     }
@@ -82,7 +122,9 @@ class PrestigeManager {
             const data = JSON.parse(stored);
             this._aether = data.aether || 0;
             this._unlockedRelics = data.unlockedRelics || [];
+            this._activeRelics = data.activeRelics || [];
             this._activeArchetype = data.activeArchetype || ArchetypeID.NONE;
+            this._unlockedArchetypes = data.unlockedArchetypes || [ArchetypeID.NONE];
         }
     }
 

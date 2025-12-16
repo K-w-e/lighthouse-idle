@@ -12,6 +12,9 @@ class GameManager {
     private gameScene!: GameScene;
     private uiScene!: UIScene;
 
+    private purchasedUpgrades: Set<string> = new Set();
+    private currentArchetypeEffect: ArchetypeID = ArchetypeID.NONE;
+
     // Offensive properties
     public lightRadius: number = 150;
     public lightAngle: number = 3;
@@ -108,7 +111,7 @@ class GameManager {
         this.uiScene.updateLighthouseHealth(this.lighthouseHealth, this.maxLighthouseHealth);
         this.uiScene.setLight(this.light);
 
-        this.applyPrestigeModifiers();
+        this.recalculateStats();
         this.timeScale = this.baseTimeScale;
     }
 
@@ -200,110 +203,29 @@ class GameManager {
             return;
         }
 
-        const value = upgrade.value || 0;
+        this.purchasedUpgrades.add(type);
 
+        // Instant effects need to remain here (actions like heal or rebuild)
+        if (this.handleInstantUpgrade(type, upgrade.value || 0)) {
+            return;
+        }
+
+        this.recalculateStats();
+    }
+
+    /**
+     * Handles upgrades that are one-time actions and not persistent stats.
+     */
+    private handleInstantUpgrade(type: string, value: number): boolean {
         switch (type) {
-            // Offensive
-            case 'beam_pierce':
-                this.beamPenetration += value;
-                break;
-            case 'beam_length':
-                this.lightRadius += value;
-                break;
-            case 'rotation_speed':
-                this.rotationSpeed += value;
-                break;
-            case 'slowing_pulse':
-                this.hasSlowingPulse = true;
-                this.slowingPulseSlowFactor += value;
-                break;
-            case 'dual_lens':
-                this.lightBeamCount = Math.max(this.lightBeamCount, 2);
-                break;
-            case 'light_amplitude':
-                this.lightAngle += value;
-                break;
-            case 'multi_lens':
-                this.lightBeamCount += value;
-                break;
-            case 'chain_lightning':
-                this.chainLightningChance += value;
-                break;
-            case 'mega_bomb':
-                this.hasMegaBomb = true;
-                break;
-
-            // Defensive
-            case 'shield_core':
-                this.maxLighthouseHealth += value;
-                this.uiScene.updateLighthouseHealth(this.lighthouseHealth, this.maxLighthouseHealth);
-                break;
-            case 'shield_capacitor':
-                this.lighthouseHealthRegen += value;
-                break;
-            case 'auto_builder':
-                this.hasAutoBuilder = true;
-                break;
             case 'island_reconstruction':
                 this.gameScene.rebuildIsland();
-                break;
+                return true;
             case 'island_expansion':
                 this.gameScene.expandIsland();
-                break;
-            case 'island_fortification':
-                this.tileHealth += value;
-                break;
-
-            // Economic
-            case 'core_crystal':
-                this.lightPerSecond += value;
-                break;
-            case 'wave_fragments':
-                this.waveFragmentsModifier += value;
-                break;
-            case 'kinetic_siphon':
-                this.kineticSiphonModifier += value;
-                break;
-            case 'tidal_force':
-                this.tidalForceModifier += value;
-                break;
-            case 'multiplier':
-                this.lightMultiplier *= value;
-                break;
-            case 'auto_light_collector':
-                this.autoLightCollectorRate += value;
-                break;
-            case 'light_interest':
-                this.lightInterestRate += value;
-                break;
-            case 'sale':
-                this.saleModifier -= value;
-                break;
-            case 'time_warp':
-            case 'light_surge':
-                this.hasLightSurge = true;
-                break;
-
-            // Energy
-            case 'energy_capacity':
-                this.maxEnergy += value;
-                this.uiScene.updateEnergy(this.currentEnergy, this.maxEnergy);
-                break;
-            case 'energy_efficiency':
-                this.energyDrainRate = Math.max(0.01, this.energyDrainRate - value);
-                break;
-            case 'click_power':
-                this.energyPerClick += value;
-                break;
-            case 'auto_energy_collector':
-                this.autoEnergyCollectorRate += value;
-                break;
-            case 'overcharge':
-                this.overchargeChance += value;
-                break;
-            case 'energy_on_kill':
-                this.energyOnKill += value;
-                break;
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -416,10 +338,192 @@ class GameManager {
         this.uiScene.updateEnergy(this.currentEnergy, this.maxEnergy);
     }
 
+    /**
+     * Resets all stats to their base default values.
+     * This is the first step in recalculating stats.
+     */
+    private resetStats() {
+        this.lightRadius = 150;
+        this.lightAngle = 3;
+        this.rotationSpeed = 1;
+        this.beamPenetration = 1;
+        this.lightBeamCount = 1;
+        this.lighthousePulseRadius = 300;
+        this.lighthousePulseForce = 50;
+
+        this.hasSlowingPulse = false;
+        this.slowingPulseSlowFactor = 0.1;
+
+        this.chainLightningChance = 0;
+
+        // Energy (preserve current)
+        this.maxEnergy = 10;
+        this.energyPerClick = 0.2;
+        this.energyDrainRate = 0.5;
+        this.autoEnergyCollectorRate = 0;
+        this.overchargeChance = 0;
+        this.energyOnKill = 0;
+
+        // Defensive (preserve current health)
+        this.maxLighthouseHealth = 100;
+        this.lighthouseHealthRegen = 1;
+        this.tileHealth = 10;
+        this.beamDamage = 1;
+        this.hasAutoBuilder = false;
+        // do not reset invulnerable status timers here, they are transient
+
+        // Economic (preserve current light)
+        this.lightPerSecond = 0;
+        this.waveFragmentsModifier = 1;
+        this.kineticSiphonModifier = 0;
+        this.tidalForceModifier = 0;
+        this.lightMultiplier = 1;
+        this.autoLightCollectorRate = 0;
+        this.lightInterestRate = 0;
+        this.saleModifier = 1;
+
+        this.hasMegaBomb = false;
+        this.hasLightSurge = false;
+        this.enemySpeedModifier = 1;
+        this.baseTimeScale = 1;
+    }
+
+    /**
+     * Applies the effect of a single upgrade.
+     */
+    private applyUpgradeEffect(type: string) {
+        const upgrade = getUpgradeById(type);
+        if (!upgrade) return;
+        const value = upgrade.value || 0;
+
+        switch (type) {
+            // Offensive
+            case 'beam_pierce':
+                this.beamPenetration += value;
+                break;
+            case 'beam_length':
+                this.lightRadius += value;
+                break;
+            case 'rotation_speed':
+                this.rotationSpeed += value;
+                break;
+            case 'slowing_pulse':
+                this.hasSlowingPulse = true;
+                this.slowingPulseSlowFactor += value;
+                break;
+            case 'dual_lens':
+                this.lightBeamCount = Math.max(this.lightBeamCount, 2);
+                break;
+            case 'light_amplitude':
+                this.lightAngle += value;
+                break;
+            case 'multi_lens':
+                this.lightBeamCount += value;
+                break;
+            case 'chain_lightning':
+                this.chainLightningChance += value;
+                break;
+            case 'mega_bomb':
+                this.hasMegaBomb = true;
+                break;
+
+            // Defensive
+            case 'shield_core':
+                this.maxLighthouseHealth += value;
+                break;
+            case 'shield_capacitor':
+                this.lighthouseHealthRegen += value;
+                break;
+            case 'auto_builder':
+                this.hasAutoBuilder = true;
+                break;
+            case 'island_fortification':
+                this.tileHealth += value;
+                break;
+
+            // Economic
+            case 'core_crystal':
+                this.lightPerSecond += value;
+                break;
+            case 'wave_fragments':
+                this.waveFragmentsModifier += value;
+                break;
+            case 'kinetic_siphon':
+                this.kineticSiphonModifier += value;
+                break;
+            case 'tidal_force':
+                this.tidalForceModifier += value;
+                break;
+            case 'multiplier':
+                this.lightMultiplier *= value;
+                break;
+            case 'auto_light_collector':
+                this.autoLightCollectorRate += value;
+                break;
+            case 'light_interest':
+                this.lightInterestRate += value;
+                break;
+            case 'sale':
+                this.saleModifier -= value;
+                break;
+            case 'time_warp':
+            case 'light_surge':
+                this.hasLightSurge = true;
+                break;
+
+            // Energy
+            case 'energy_capacity':
+                this.maxEnergy += value;
+                break;
+            case 'energy_efficiency':
+                this.energyDrainRate = Math.max(0.01, this.energyDrainRate - value);
+                break;
+            case 'click_power':
+                this.energyPerClick += value;
+                break;
+            case 'auto_energy_collector':
+                this.autoEnergyCollectorRate += value;
+                break;
+            case 'overcharge':
+                this.overchargeChance += value;
+                break;
+            case 'energy_on_kill':
+                this.energyOnKill += value;
+                break;
+        }
+    }
+
+    public recalculateStats() {
+        this.resetStats();
+
+        // Apply Upgrades
+        this.purchasedUpgrades.forEach((type) => this.applyUpgradeEffect(type));
+
+        // Apply Prestige (Archetypes & Relics)
+        this.applyPrestigeModifiers();
+
+        // Update UI logic (clamping values)
+        this.currentEnergy = Math.min(this.currentEnergy, this.maxEnergy);
+        this.lighthouseHealth = Math.min(this.lighthouseHealth, this.maxLighthouseHealth);
+
+        if (this.uiScene) {
+            this.uiScene.updateEnergy(this.currentEnergy, this.maxEnergy);
+            this.uiScene.updateLighthouseHealth(this.lighthouseHealth, this.maxLighthouseHealth);
+        }
+
+        this.timeScale = this.baseTimeScale;
+        console.log('Recalculated Stats');
+    }
+
+    public refreshPrestigeModifiers() {
+        this.recalculateStats();
+    }
+
     private applyPrestigeModifiers() {
         const archetype = PrestigeManager.activeArchetype;
-        const relics = PrestigeManager.unlockedRelics;
+        const relics = PrestigeManager.activeRelics;
 
+        // Apply Archetype
         if (archetype === ArchetypeID.CHRONOMANCER) {
             console.log('Archetype: Chronomancer Active');
             this.hasLightSurge = true;
@@ -434,6 +538,9 @@ class GameManager {
             this.autoBuilderTimer = 0;
         }
 
+        this.currentArchetypeEffect = archetype;
+
+        // Apply Relics
         if (relics.includes('prism_of_greed')) {
             this.lightMultiplier *= 3;
             this.enemySpeedModifier = 1.8;
@@ -441,9 +548,8 @@ class GameManager {
         if (relics.includes('solar_sail')) {
             this.energyDrainRate *= 0.5;
             this.maxLighthouseHealth = 20;
-            this.lighthouseHealth = 20;
+            this.lighthouseHealth = Math.min(this.lighthouseHealth, 20);
             this.lighthouseHealthRegen = 20;
-            this.uiScene.updateLighthouseHealth(this.lighthouseHealth, this.maxLighthouseHealth);
         }
     }
 }
