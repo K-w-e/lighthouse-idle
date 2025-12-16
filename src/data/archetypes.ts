@@ -43,7 +43,7 @@ export const ARCHETYPES: Record<ArchetypeID, Archetype> = {
         id: ArchetypeID.ARCHITECT,
         name: 'The Architect',
         description: 'Builder of impenetrable defenses.',
-        passiveDescription: 'Auto-Builder is always active and free.',
+        passiveDescription: 'Chance to take 0 damage from waves. (10%)',
         activeAbilityDescription: 'Fortified Construct: Temporary invulnerability.',
         cost: 60,
     },

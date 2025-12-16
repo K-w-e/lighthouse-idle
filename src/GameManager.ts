@@ -52,11 +52,11 @@ class GameManager {
     public isInvulnerable: boolean = false;
     public invulnerableTimer: number = 0;
     public invulnerableDuration: number = 5000;
-    public invulnerableCooldown: number = 30000;
+    public invulnerableCooldown: number = 60000;
     public invulnerableCooldownTimer: number = 0;
 
     // Economic properties
-    private light: number = 100;
+    private light: number = 100000;
     public lightPerSecond: number = 0;
     public waveFragmentsModifier: number = 1;
     public kineticSiphonModifier: number = 0;
@@ -155,6 +155,7 @@ class GameManager {
             this.invulnerableTimer -= delta;
             if (this.invulnerableTimer <= 0) {
                 this.isInvulnerable = false;
+                this.gameScene.setInvulnerabilityEffect(false);
             }
         }
         if (this.invulnerableCooldownTimer > 0) {
@@ -324,6 +325,7 @@ class GameManager {
         this.invulnerableTimer = this.invulnerableDuration;
         this.invulnerableCooldownTimer = this.invulnerableCooldown;
         this.uiScene.showInfoText('FORTIFIED CONSTRUCT ACTIVE!');
+        this.gameScene.setInvulnerabilityEffect(true);
     }
 
     public handleLighthouseClick() {

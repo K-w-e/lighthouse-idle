@@ -8,7 +8,7 @@ import { createLand, createVision, drawLight, getTileColor } from '../utils/draw
 import { FloatingText } from '../object/FloatingText';
 import WaterPipeline from '../pipelines/WaterPipeline';
 import PrestigeManager from '../managers/PrestigeManager';
-import { ArchetypeID } from '../data/archetypes';
+import { ArchetypeID, ARCHETYPES } from '../data/archetypes';
 
 export default class GameScene extends Phaser.Scene {
     private lighthouse!: Phaser.GameObjects.Sprite;
@@ -264,6 +264,10 @@ export default class GameScene extends Phaser.Scene {
         segment: Phaser.GameObjects.GameObject,
         tile: Phaser.GameObjects.GameObject,
     ) {
+        const tenPercentChance = Math.random() < 0.1;
+        if (PrestigeManager.activeArchetype == ArchetypeID.ARCHITECT) {
+            tenPercentChance ? null : this.handleWaveLandCollision(wave, tile);
+        }
         const wave = (segment as any).parentContainer as Wave;
         if (wave && wave.active) {
             this.handleWaveLandCollision(wave, tile);
@@ -599,6 +603,46 @@ export default class GameScene extends Phaser.Scene {
                 pulse.destroy();
             },
         });
+    }
+
+    private shieldGraphics?: Phaser.GameObjects.Graphics;
+    private shieldTween?: Phaser.Tweens.Tween;
+
+    public setInvulnerabilityEffect(active: boolean) {
+        if (active) {
+            if (!this.shieldGraphics) {
+                this.shieldGraphics = this.add.graphics({ x: this.lighthouse.x, y: this.lighthouse.y });
+                this.shieldGraphics.setDepth(4);
+
+                const shieldRadius = this.landRadius + 10;
+
+                this.shieldGraphics.lineStyle(4, 0x10b981, 0.8);
+                this.shieldGraphics.fillStyle(0x10b981, 0.1);
+                this.shieldGraphics.strokeCircle(0, 0, shieldRadius);
+                this.shieldGraphics.fillCircle(0, 0, shieldRadius);
+
+                this.shieldTween = this.tweens.add({
+                    targets: this.shieldGraphics,
+                    alpha: { from: 0.8, to: 0.4 },
+                    scale: { from: 1, to: 1.05 },
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 1000,
+                    ease: 'Sine.easeInOut',
+                });
+            }
+            this.shieldGraphics.setVisible(true);
+        } else {
+            if (this.shieldGraphics) {
+                this.shieldGraphics.setVisible(false);
+                if (this.shieldTween) {
+                    this.shieldTween.stop();
+                    this.shieldTween = undefined;
+                }
+                this.shieldGraphics.destroy();
+                this.shieldGraphics = undefined;
+            }
+        }
     }
 
     public triggerMegaBomb() {
