@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import UIScene from './UIScene';
 import WaterPipeline from '../pipelines/WaterPipeline';
+import PrestigeManager from '../managers/PrestigeManager';
 
 export default class TitleScene extends Phaser.Scene {
     constructor() {
@@ -75,5 +76,29 @@ export default class TitleScene extends Phaser.Scene {
             this.scene.launch('TutorialScene');
             this.scene.pause();
         });
+
+        const prestigeButton = this.add
+            .text(centerX, centerY + 210, 'Prestige Shop', {
+                fontSize: '28px',
+                color: '#A78BFA',
+                backgroundColor: '#1e1b4b',
+                padding: { x: 20, y: 10 },
+                fontFamily: 'PixelFont',
+            })
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true });
+
+        prestigeButton.on('pointerdown', () => {
+            this.scene.launch('PrestigeScene', { fromTitle: true });
+            this.scene.pause();
+        });
+
+        this.add
+            .text(centerX, height - 40, `Aether: ${PrestigeManager.aether}`, {
+                fontSize: '22px',
+                color: '#A78BFA',
+                fontFamily: 'PixelFont',
+            })
+            .setOrigin(0.5);
     }
 }

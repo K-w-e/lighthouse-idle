@@ -92,15 +92,8 @@ class PrestigeManager {
         this.save();
     }
 
-    public calculatePotentialAether(): number {
-        const lightGain = Math.floor(GameManager.getLight() / 1000);
-        const waveGain = Math.floor(GameManager.waveNumber * 2);
-        return Math.floor((lightGain + waveGain) * 1.0);
-    }
-
     public prestige() {
-        const aetherGain = this.calculatePotentialAether();
-        this._aether += aetherGain;
+        this._aether += 1;
         this.save();
         window.location.reload();
     }

@@ -56,7 +56,7 @@ class GameManager {
     public invulnerableCooldownTimer: number = 0;
 
     // Economic properties
-    private light: number = 100000;
+    private light: number = 100;
     public lightPerSecond: number = 0;
     public waveFragmentsModifier: number = 1;
     public kineticSiphonModifier: number = 0;

@@ -29,7 +29,7 @@ export const ARCHETYPES: Record<ArchetypeID, Archetype> = {
         description: 'Manipulates the flow of time to gain an advantage.',
         passiveDescription: 'Logic ticks 20% faster.',
         activeAbilityDescription: 'Light Surge: Temporarily expand light beam.',
-        cost: 50,
+        cost: 1,
     },
     [ArchetypeID.STORMBRINGER]: {
         id: ArchetypeID.STORMBRINGER,
@@ -37,7 +37,7 @@ export const ARCHETYPES: Record<ArchetypeID, Archetype> = {
         description: 'Harnesses the fury of the storm.',
         passiveDescription: 'Chance to strike enemies with lightning on spawn. (10%)',
         activeAbilityDescription: 'Overload: Massive screen-wide damage.',
-        cost: 75,
+        cost: 1,
     },
     [ArchetypeID.ARCHITECT]: {
         id: ArchetypeID.ARCHITECT,
@@ -45,6 +45,6 @@ export const ARCHETYPES: Record<ArchetypeID, Archetype> = {
         description: 'Builder of impenetrable defenses.',
         passiveDescription: 'Chance to take 0 damage from waves. (10%)',
         activeAbilityDescription: 'Fortified Construct: Temporary invulnerability.',
-        cost: 60,
+        cost: 1,
     },
 };

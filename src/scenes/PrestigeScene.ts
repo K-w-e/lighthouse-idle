@@ -15,12 +15,14 @@ export default class PrestigeScene extends Phaser.Scene {
     private aetherText!: Phaser.GameObjects.Text;
     private container!: Phaser.GameObjects.Container;
     private currentTab: 'archetypes' | 'relics' = 'archetypes';
+    private fromTitle: boolean = false;
 
     constructor() {
         super('PrestigeScene');
     }
 
-    create() {
+    create(data?: { fromTitle?: boolean }) {
+        this.fromTitle = data?.fromTitle ?? false;
         const { width, height } = this.cameras.main;
 
         // Background
@@ -46,7 +48,11 @@ export default class PrestigeScene extends Phaser.Scene {
             .setInteractive({ useHandCursor: true });
         closeBtn.on('pointerdown', () => {
             this.scene.stop();
-            this.scene.resume('GameScene');
+            if (this.fromTitle) {
+                this.scene.resume('TitleScene');
+            } else {
+                this.scene.resume('GameScene');
+            }
         });
 
         // Aether Display
@@ -66,8 +72,10 @@ export default class PrestigeScene extends Phaser.Scene {
 
         this.refreshContent();
 
-        // Rebirth Button (Bottom)
-        this.createRebirthButton(width, height);
+        // Rebirth Button (only show when in game, not from title)
+        if (!this.fromTitle) {
+            this.createRebirthButton(width, height);
+        }
     }
 
     private createTabs(width: number) {
@@ -177,7 +185,9 @@ export default class PrestigeScene extends Phaser.Scene {
                         .setInteractive({ useHandCursor: true })
                         .on('pointerdown', () => {
                             PrestigeManager.setArchetype(arch.id);
-                            GameManager.refreshPrestigeModifiers();
+                            if (!this.fromTitle) {
+                                GameManager.refreshPrestigeModifiers();
+                            }
                             this.refreshContent();
                         });
 
@@ -333,7 +343,9 @@ export default class PrestigeScene extends Phaser.Scene {
                     .setInteractive({ useHandCursor: true })
                     .on('pointerdown', () => {
                         PrestigeManager.toggleRelic(relic.id);
-                        GameManager.refreshPrestigeModifiers();
+                        if (!this.fromTitle) {
+                            GameManager.refreshPrestigeModifiers();
+                        }
                         this.refreshContent();
                     });
 
@@ -345,30 +357,43 @@ export default class PrestigeScene extends Phaser.Scene {
     }
 
     private createRebirthButton(width: number, height: number) {
-        const potentialAether = PrestigeManager.calculatePotentialAether();
+        const currentWave = GameManager.waveNumber;
+        const canPrestige = currentWave >= 10;
 
         const btnBg = this.add.graphics();
-        btnBg.fillStyle(0xdc2626);
+        btnBg.fillStyle(canPrestige ? 0xdc2626 : 0x4b5563);
         btnBg.fillRoundedRect(width / 2 - 100, height - 80, 200, 50, 10);
 
         const btnText = this.add
-            .text(width / 2, height - 55, `PRESTIGE (+${potentialAether} Aether)`, {
+            .text(width / 2, height - 55, canPrestige ? `PRESTIGE (+1 Aether)` : `Wave ${currentWave}/10`, {
                 fontSize: '18px',
                 fontStyle: 'bold',
+                color: canPrestige ? '#FFFFFF' : '#9CA3AF',
             })
             .setOrigin(0.5);
 
-        const zone = this.add
-            .zone(width / 2, height - 55, 200, 50)
-            .setInteractive({ useHandCursor: true })
-            .on('pointerdown', () => {
-                if (
-                    confirm(
-                        `Are you sure you want to Rebirth? You will lose all current progress but gain ${potentialAether} Aether.`,
-                    )
-                ) {
-                    PrestigeManager.prestige();
-                }
-            });
+        if (!canPrestige) {
+            this.add
+                .text(width / 2, height - 110, 'Reach Wave 10 to Prestige', {
+                    fontSize: '14px',
+                    color: '#9CA3AF',
+                })
+                .setOrigin(0.5);
+        }
+
+        if (canPrestige) {
+            const zone = this.add
+                .zone(width / 2, height - 55, 200, 50)
+                .setInteractive({ useHandCursor: true })
+                .on('pointerdown', () => {
+                    if (
+                        confirm(
+                            `Are you sure you want to Rebirth? You will lose all current progress but gain 1 Aether.`,
+                        )
+                    ) {
+                        PrestigeManager.prestige();
+                    }
+                });
+        }
     }
 }
