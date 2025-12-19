@@ -187,7 +187,7 @@ class GameManager {
         this.waveState = 'waiting';
         this.waveNumber++;
         this.waveTimer = this.waveDelay;
-        this.addLight(this.waveReward * this.waveNumber);
+        this.addLight(this.waveReward * this.waveNumber * this.lightMultiplier);
         this.uiScene.updateWaveNumber(this.waveNumber);
     }
 
@@ -227,7 +227,7 @@ class GameManager {
     }
 
     public getWaveLightReward(wave: Wave): number {
-        return Math.floor(wave.waveWidth / 10 + this.waveFragmentsModifier * this.lightMultiplier);
+        return Math.floor((wave.waveWidth / 10 + this.waveFragmentsModifier) * this.lightMultiplier);
     }
 
     public onWaveDestroyed(wave: Wave) {
@@ -246,7 +246,7 @@ class GameManager {
         if (this.lighthouseHealth <= 0) {
             this.gameOver();
         }
-        this.addLight(this.kineticSiphonModifier);
+        this.addLight(this.kineticSiphonModifier * this.lightMultiplier);
     }
 
     private gameOver() {
@@ -530,7 +530,7 @@ class GameManager {
         // Apply Relics
         if (relics.includes('prism_of_greed')) {
             this.lightMultiplier *= 3;
-            this.enemySpeedModifier = 1.8;
+            this.enemySpeedModifier = 1.5;
         }
         if (relics.includes('solar_sail')) {
             this.energyDrainRate *= 0.5;

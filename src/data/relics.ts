@@ -19,7 +19,7 @@ export const RELICS: Relic[] = [
         name: 'Solar Sail',
         description: 'Captures the raw essence of the sun.',
         cost: 20,
-        effectDescription: 'Energy regenerates 2x faster. Max Health low, Regen high.',
+        effectDescription: 'Energy drains 50% slower. Max Health low, Regen high.',
     },
 ];
 
