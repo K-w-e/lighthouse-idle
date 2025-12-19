@@ -351,22 +351,27 @@ export default class PrestigeScene extends Phaser.Scene {
         const currentWave = GameManager.waveNumber;
         const canPrestige = currentWave >= 10;
 
-        const btnW = 400;
+        const btnW = 450;
         const btnH = 50;
         const btnX = width / 2 - btnW / 2;
-        const btnY = height - 90;
+        const btnY = height - 80;
 
         const btnBg = this.add.graphics();
         btnBg.fillStyle(canPrestige ? 0xdc2626 : 0x4b5563);
         btnBg.fillRoundedRect(btnX, btnY, btnW, btnH, 12);
 
         const btnText = this.add
-            .text(width / 2, btnY + btnH / 2, canPrestige ? `PRESTIGE (+1 Aether)` : `Wave ${currentWave}/10`, {
-                fontSize: '18px',
-                fontStyle: 'bold',
-                color: canPrestige ? '#FFFFFF' : '#9CA3AF',
-                fontFamily: 'PixelFont',
-            })
+            .text(
+                width / 2,
+                btnY + btnH / 2,
+                canPrestige ? `PRESTIGE (+1 Aether)` : `Next prestige: Wave ${currentWave}/10`,
+                {
+                    fontSize: '18px',
+                    fontStyle: 'bold',
+                    color: canPrestige ? '#FFFFFF' : '#9CA3AF',
+                    fontFamily: 'PixelFont',
+                },
+            )
             .setOrigin(0.5);
 
         if (!canPrestige) {
