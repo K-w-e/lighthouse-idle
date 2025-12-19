@@ -92,10 +92,11 @@ class PrestigeManager {
         this.save();
     }
 
-    public prestige() {
+    public prestige(): boolean {
         this._aether += 1;
         this.save();
-        window.location.reload();
+        GameManager.fullReset();
+        return true;
     }
 
     private save() {

@@ -249,6 +249,14 @@ export const upgrades: { [key: string]: Upgrade[] } = {
     ],
 };
 
+const originalCosts: { [id: string]: number } = {};
+
+for (const category of Object.values(upgrades)) {
+    for (const upgrade of category) {
+        originalCosts[upgrade.id] = upgrade.cost;
+    }
+}
+
 export const getUpgradeById = (id: string): Upgrade | undefined => {
     for (const category of Object.values(upgrades)) {
         const found = category.find((u) => u.id === id);
@@ -257,4 +265,12 @@ export const getUpgradeById = (id: string): Upgrade | undefined => {
         }
     }
     return undefined;
+};
+
+export const resetUpgradeCosts = (): void => {
+    for (const category of Object.values(upgrades)) {
+        for (const upgrade of category) {
+            upgrade.cost = originalCosts[upgrade.id];
+        }
+    }
 };

@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import GameScene from './scenes/GameScene';
 import UIScene from './scenes/UIScene';
-import { getUpgradeById } from './data/upgrades';
+import { getUpgradeById, resetUpgradeCosts } from './data/upgrades';
 import { Wave } from './object/Wave';
 import PrestigeManager from './managers/PrestigeManager';
 import { ArchetypeID } from './data/archetypes';
@@ -379,6 +379,44 @@ class GameManager {
         this.hasLightSurge = false;
         this.enemySpeedModifier = 1;
         this.baseTimeScale = 1;
+    }
+
+    public fullReset() {
+        this.purchasedUpgrades.clear();
+
+        resetUpgradeCosts();
+
+        this.resetStats();
+
+        this.light = 100;
+        this.currentEnergy = this.maxEnergy;
+        this.lighthouseHealth = this.maxLighthouseHealth;
+
+        this.waveNumber = 1;
+        this.waveTimer = this.waveTime;
+        this.waveState = 'in_wave';
+
+        this.megaBombTimer = 0;
+        this.lightSurgeTimer = 0;
+        this.isLightSurgeActive = false;
+        this.lightSurgeDurationTimer = 0;
+        this.surgeAddedRadius = 0;
+        this.surgeAddedAngle = 0;
+        this.isInvulnerable = false;
+        this.invulnerableTimer = 0;
+        this.invulnerableCooldownTimer = 0;
+        this.slowingPulseTimer = 0;
+        this.autoBuilderTimer = 0;
+
+        this.applyPrestigeModifiers();
+
+        this.timeScale = this.baseTimeScale;
+        if (this.uiScene) {
+            this.uiScene.updateEnergy(this.currentEnergy, this.maxEnergy);
+            this.uiScene.updateLighthouseHealth(this.lighthouseHealth, this.maxLighthouseHealth);
+            this.uiScene.setLight(this.light);
+            this.uiScene.updateWaveNumber(this.waveNumber);
+        }
     }
 
     private applyUpgradeEffect(type: string) {

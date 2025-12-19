@@ -25,10 +25,8 @@ export default class PrestigeScene extends Phaser.Scene {
         this.fromTitle = data?.fromTitle ?? false;
         const { width, height } = this.cameras.main;
 
-        // Background
         this.add.graphics().fillStyle(BG_COLOR, 1).fillRect(0, 0, width, height);
 
-        // Header
         this.add
             .text(width / 2, 40, "The Keeper's Path", {
                 fontSize: '32px',
@@ -38,7 +36,6 @@ export default class PrestigeScene extends Phaser.Scene {
             })
             .setOrigin(0.5);
 
-        // Close Button
         const closeBtn = this.add
             .text(width - 40, 40, 'X', {
                 fontSize: '28px',
@@ -55,7 +52,6 @@ export default class PrestigeScene extends Phaser.Scene {
             }
         });
 
-        // Aether Display
         this.aetherText = this.add
             .text(width / 2, 80, `Aether: ${PrestigeManager.aether}`, {
                 fontSize: '24px',
@@ -64,15 +60,12 @@ export default class PrestigeScene extends Phaser.Scene {
             })
             .setOrigin(0.5);
 
-        // Tabs
         this.createTabs(width);
 
-        // Container for content
         this.container = this.add.container(0, 150);
 
         this.refreshContent();
 
-        // Rebirth Button (only show when in game, not from title)
         if (!this.fromTitle) {
             this.createRebirthButton(width, height);
         }
@@ -204,7 +197,6 @@ export default class PrestigeScene extends Phaser.Scene {
                     this.container.add(activeText);
                 }
             } else {
-                // Buy Button
                 const btnX = width / 2 + 150;
                 const btnY = y + 30;
                 const btnW = 80;
@@ -318,7 +310,6 @@ export default class PrestigeScene extends Phaser.Scene {
 
                 this.container.add([btn, btnText]);
             } else {
-                // Toggle Button
                 const btnX = width / 2 + 150;
                 const btnY = y + 30;
                 const btnW = 100;
@@ -386,14 +377,110 @@ export default class PrestigeScene extends Phaser.Scene {
                 .zone(width / 2, height - 55, 200, 50)
                 .setInteractive({ useHandCursor: true })
                 .on('pointerdown', () => {
-                    if (
-                        confirm(
-                            `Are you sure you want to Rebirth? You will lose all current progress but gain 1 Aether.`,
-                        )
-                    ) {
-                        PrestigeManager.prestige();
-                    }
+                    this.showConfirmModal();
                 });
         }
+    }
+
+    private showConfirmModal() {
+        const { width, height } = this.cameras.main;
+
+        const overlay = this.add.graphics();
+        overlay.fillStyle(0x000000, 0.7);
+        overlay.fillRect(0, 0, width, height);
+        overlay.setDepth(100);
+
+        const modalW = 400;
+        const modalH = 200;
+        const modalX = width / 2 - modalW / 2;
+        const modalY = height / 2 - modalH / 2;
+
+        const modal = this.add.graphics();
+        modal.fillStyle(0x1e293b);
+        modal.fillRoundedRect(modalX, modalY, modalW, modalH, 15);
+        modal.lineStyle(2, 0x818cf8);
+        modal.strokeRoundedRect(modalX, modalY, modalW, modalH, 15);
+        modal.setDepth(101);
+
+        const title = this.add
+            .text(width / 2, modalY + 30, 'Confirm Prestige', {
+                fontSize: '24px',
+                color: '#F472B6',
+                fontStyle: 'bold',
+                fontFamily: 'PixelFont',
+            })
+            .setOrigin(0.5)
+            .setDepth(102);
+
+        const message = this.add
+            .text(width / 2, modalY + 80, 'You will lose all current progress\nbut gain 1 Aether.', {
+                fontSize: '16px',
+                color: '#CBD5E1',
+                align: 'center',
+                fontFamily: 'PixelFont',
+            })
+            .setOrigin(0.5)
+            .setDepth(102);
+
+        const confirmBtn = this.add.graphics();
+        confirmBtn.fillStyle(0xdc2626);
+        confirmBtn.fillRoundedRect(width / 2 - 110, modalY + 130, 100, 40, 8);
+        confirmBtn.setDepth(102);
+
+        const confirmText = this.add
+            .text(width / 2 - 60, modalY + 150, 'PRESTIGE', {
+                fontSize: '14px',
+                color: '#FFFFFF',
+                fontStyle: 'bold',
+                fontFamily: 'PixelFont',
+            })
+            .setOrigin(0.5)
+            .setDepth(102);
+
+        const confirmZone = this.add
+            .zone(width / 2 - 60, modalY + 150, 100, 40)
+            .setInteractive({ useHandCursor: true })
+            .setDepth(103)
+            .on('pointerdown', () => {
+                PrestigeManager.prestige();
+                this.aetherText.setText(`Aether: ${PrestigeManager.aether}`);
+
+                this.scene.stop('GameScene');
+                this.scene.stop('UIScene');
+                this.scene.start('GameScene');
+                this.scene.start('UIScene');
+                this.scene.stop();
+            });
+
+        const cancelBtn = this.add.graphics();
+        cancelBtn.fillStyle(0x4b5563);
+        cancelBtn.fillRoundedRect(width / 2 + 10, modalY + 130, 100, 40, 8);
+        cancelBtn.setDepth(102);
+
+        const cancelText = this.add
+            .text(width / 2 + 60, modalY + 150, 'CANCEL', {
+                fontSize: '14px',
+                color: '#FFFFFF',
+                fontFamily: 'PixelFont',
+            })
+            .setOrigin(0.5)
+            .setDepth(102);
+
+        const cancelZone = this.add
+            .zone(width / 2 + 60, modalY + 150, 100, 40)
+            .setInteractive({ useHandCursor: true })
+            .setDepth(103)
+            .on('pointerdown', () => {
+                overlay.destroy();
+                modal.destroy();
+                title.destroy();
+                message.destroy();
+                confirmBtn.destroy();
+                confirmText.destroy();
+                confirmZone.destroy();
+                cancelBtn.destroy();
+                cancelText.destroy();
+                cancelZone.destroy();
+            });
     }
 }
