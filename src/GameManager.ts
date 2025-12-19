@@ -82,7 +82,7 @@ class GameManager {
     public timeScale: number = 1;
 
     // Wave properties
-    public waveNumber: number = 1;
+    public waveNumber: number = 10;
     public waveTime: number = 30; // seconds
     public waveTimer: number = this.waveTime;
     public waveReward: number = 100;

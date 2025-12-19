@@ -156,7 +156,7 @@ export default class PrestigeScene extends Phaser.Scene {
                 if (!isActive) {
                     const btnX = width / 2 + 150;
                     const btnY = y + 30;
-                    const btnW = 80;
+                    const btnW = 100;
                     const btnH = 40;
 
                     const btn = this.add.graphics();
@@ -312,7 +312,7 @@ export default class PrestigeScene extends Phaser.Scene {
             } else {
                 const btnX = width / 2 + 150;
                 const btnY = y + 30;
-                const btnW = 100;
+                const btnW = 150;
                 const btnH = 40;
 
                 const btn = this.add.graphics();
@@ -351,30 +351,37 @@ export default class PrestigeScene extends Phaser.Scene {
         const currentWave = GameManager.waveNumber;
         const canPrestige = currentWave >= 10;
 
+        const btnW = 400;
+        const btnH = 50;
+        const btnX = width / 2 - btnW / 2;
+        const btnY = height - 90;
+
         const btnBg = this.add.graphics();
         btnBg.fillStyle(canPrestige ? 0xdc2626 : 0x4b5563);
-        btnBg.fillRoundedRect(width / 2 - 100, height - 80, 200, 50, 10);
+        btnBg.fillRoundedRect(btnX, btnY, btnW, btnH, 12);
 
         const btnText = this.add
-            .text(width / 2, height - 55, canPrestige ? `PRESTIGE (+1 Aether)` : `Wave ${currentWave}/10`, {
+            .text(width / 2, btnY + btnH / 2, canPrestige ? `PRESTIGE (+1 Aether)` : `Wave ${currentWave}/10`, {
                 fontSize: '18px',
                 fontStyle: 'bold',
                 color: canPrestige ? '#FFFFFF' : '#9CA3AF',
+                fontFamily: 'PixelFont',
             })
             .setOrigin(0.5);
 
         if (!canPrestige) {
             this.add
-                .text(width / 2, height - 110, 'Reach Wave 10 to Prestige', {
-                    fontSize: '14px',
+                .text(width / 2, btnY - 25, 'Reach Wave 10 to Prestige', {
+                    fontSize: '16px',
                     color: '#9CA3AF',
+                    fontFamily: 'PixelFont',
                 })
                 .setOrigin(0.5);
         }
 
         if (canPrestige) {
             const zone = this.add
-                .zone(width / 2, height - 55, 200, 50)
+                .zone(width / 2, btnY + btnH / 2, btnW, btnH)
                 .setInteractive({ useHandCursor: true })
                 .on('pointerdown', () => {
                     this.showConfirmModal();
@@ -390,8 +397,8 @@ export default class PrestigeScene extends Phaser.Scene {
         overlay.fillRect(0, 0, width, height);
         overlay.setDepth(100);
 
-        const modalW = 400;
-        const modalH = 200;
+        const modalW = 500;
+        const modalH = 280;
         const modalX = width / 2 - modalW / 2;
         const modalY = height / 2 - modalH / 2;
 
@@ -403,8 +410,8 @@ export default class PrestigeScene extends Phaser.Scene {
         modal.setDepth(101);
 
         const title = this.add
-            .text(width / 2, modalY + 30, 'Confirm Prestige', {
-                fontSize: '24px',
+            .text(width / 2, modalY + 40, 'Confirm Prestige', {
+                fontSize: '28px',
                 color: '#F472B6',
                 fontStyle: 'bold',
                 fontFamily: 'PixelFont',
@@ -413,22 +420,27 @@ export default class PrestigeScene extends Phaser.Scene {
             .setDepth(102);
 
         const message = this.add
-            .text(width / 2, modalY + 80, 'You will lose all current progress\nbut gain 1 Aether.', {
-                fontSize: '16px',
+            .text(width / 2, modalY + 110, 'You will lose all current progress\nbut gain 1 Aether.', {
+                fontSize: '18px',
                 color: '#CBD5E1',
                 align: 'center',
                 fontFamily: 'PixelFont',
+                wordWrap: { width: modalW - 60 },
             })
             .setOrigin(0.5)
             .setDepth(102);
 
+        const btnWidth = 140;
+        const btnHeight = 50;
+        const btnY = modalY + 190;
+
         const confirmBtn = this.add.graphics();
         confirmBtn.fillStyle(0xdc2626);
-        confirmBtn.fillRoundedRect(width / 2 - 110, modalY + 130, 100, 40, 8);
+        confirmBtn.fillRoundedRect(width / 2 - btnWidth - 15, btnY, btnWidth, btnHeight, 10);
         confirmBtn.setDepth(102);
 
         const confirmText = this.add
-            .text(width / 2 - 60, modalY + 150, 'PRESTIGE', {
+            .text(width / 2 - btnWidth / 2 - 15, btnY + btnHeight / 2, 'PRESTIGE', {
                 fontSize: '14px',
                 color: '#FFFFFF',
                 fontStyle: 'bold',
@@ -438,7 +450,7 @@ export default class PrestigeScene extends Phaser.Scene {
             .setDepth(102);
 
         const confirmZone = this.add
-            .zone(width / 2 - 60, modalY + 150, 100, 40)
+            .zone(width / 2 - btnWidth / 2 - 15, btnY + btnHeight / 2, btnWidth, btnHeight)
             .setInteractive({ useHandCursor: true })
             .setDepth(103)
             .on('pointerdown', () => {
@@ -454,12 +466,12 @@ export default class PrestigeScene extends Phaser.Scene {
 
         const cancelBtn = this.add.graphics();
         cancelBtn.fillStyle(0x4b5563);
-        cancelBtn.fillRoundedRect(width / 2 + 10, modalY + 130, 100, 40, 8);
+        cancelBtn.fillRoundedRect(width / 2 + 15, btnY, btnWidth, btnHeight, 10);
         cancelBtn.setDepth(102);
 
         const cancelText = this.add
-            .text(width / 2 + 60, modalY + 150, 'CANCEL', {
-                fontSize: '14px',
+            .text(width / 2 + btnWidth / 2 + 15, btnY + btnHeight / 2, 'CANCEL', {
+                fontSize: '18px',
                 color: '#FFFFFF',
                 fontFamily: 'PixelFont',
             })
@@ -467,7 +479,7 @@ export default class PrestigeScene extends Phaser.Scene {
             .setDepth(102);
 
         const cancelZone = this.add
-            .zone(width / 2 + 60, modalY + 150, 100, 40)
+            .zone(width / 2 + btnWidth / 2 + 15, btnY + btnHeight / 2, btnWidth, btnHeight)
             .setInteractive({ useHandCursor: true })
             .setDepth(103)
             .on('pointerdown', () => {
